@@ -1389,10 +1389,13 @@ static bool __stdcall isDepthOfFieldEnabledHook() noexcept
     return false;
 }
 
+// TODO: Experimental
+/*
 static bool __fastcall isUsingStaticPropDebugModesHook(void* thisPointer, void* edx) noexcept
 {
     return config->visuals.mapColor.enabled || config->visuals.asusProps != 100;
 }
+*/
 
 static char __fastcall newFunctionClientBypass(void* thisPointer, void* edx, const char* moduleName) noexcept
 {
@@ -1551,7 +1554,8 @@ void Hooks::install() noexcept
     checkForSequenceChange.detour(memory->checkForSequenceChange, checkForSequenceChangeHook);
 
     getColorModulation.detour(memory->getColorModulation, getColorModulationHook);
-    isUsingStaticPropDebugModes.detour(memory->isUsingStaticPropDebugModes, isUsingStaticPropDebugModesHook);
+    // TODO: Experimental
+	// isUsingStaticPropDebugModes.detour(memory->isUsingStaticPropDebugModes, isUsingStaticPropDebugModesHook);
 
     traceFilterForHeadCollision.detour(memory->traceFilterForHeadCollision, traceFilterForHeadCollisionHook);
     performScreenOverlay.detour(memory->performScreenOverlay, performScreenOverlayHook);

@@ -186,7 +186,8 @@ public:
     std::string* relayCluster;
     std::uintptr_t unlockInventory;
     std::uintptr_t getColorModulation;
-    std::uintptr_t isUsingStaticPropDebugModes;
+    // TODO: Experimental
+    // std::uintptr_t isUsingStaticPropDebugModes;
     std::uintptr_t traceFilterForHeadCollision;
     std::uintptr_t performScreenOverlay;
     std::uintptr_t postNetworkDataReceived;
