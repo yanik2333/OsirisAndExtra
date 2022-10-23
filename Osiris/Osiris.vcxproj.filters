@@ -260,6 +260,9 @@
     <ClCompile Include="SDK\BitBuffer.cpp">
       <Filter>SDK</Filter>
     </ClCompile>
+    <ClCompile Include="random_generator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GUI.h">
@@ -672,6 +675,9 @@
     </ClInclude>
     <ClInclude Include="SDK\BitBuffer.h">
       <Filter>SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="random_generator.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
