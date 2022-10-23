@@ -1,3 +1,5 @@
+#include <random>
+
 #include "EnginePrediction.h"
 #include "Fakelag.h"
 #include "Tickbase.h"
@@ -37,5 +39,9 @@ void Fakelag::run(bool& sendPacket) noexcept
 
     chokedPackets = std::clamp(chokedPackets, 0, maxUserCmdProcessTicks - Tickbase::getTargetTickShift());
 
-    sendPacket = netChannel->chokedPackets >= chokedPackets;
+#undef min
+    if (interfaces->engine->isVoiceRecording())
+        sendPacket = netChannel->chokedPackets >= std::min(3, chokedPackets);
+    else
+        sendPacket = netChannel->chokedPackets >= chokedPackets;
 }
