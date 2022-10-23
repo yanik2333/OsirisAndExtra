@@ -20,24 +20,27 @@ namespace Fakelag
         std::uniform_int_distribution<T> distribution;
         std::default_random_engine random_engine;
     public:
-    	explicit random_generator(const unsigned seed) : distribution{}, random_engine{ seed }
+        explicit random_generator(const unsigned seed) : distribution{}, random_engine{ seed }
         {
         }
+
         random_generator(const T min, const T max, const unsigned seed) : distribution{ min, max }, random_engine{ seed }
         {
         }
-        T get() const
+
+        [[nodiscard]] T get()
         {
             return distribution(random_engine);
         }
-        void set_range(T min, T max)
+
+        void set_range(const T min, const T max)
         {
             if (distribution.min() == min && distribution.max() == max)
                 return;
-            distribution = std::uniform_int_distribution<T>{ min, max };
+            distribution = std::uniform_int_distribution{ min, max };
         }
     };
-    random_generator<int> random{ static_cast<unsigned>(std::chrono::high_resolution_clock::now().time_since_epoch().count()) };
+	random_generator<int> random{ static_cast<unsigned>(std::chrono::high_resolution_clock::now().time_since_epoch().count()) };
 }
 
 void Fakelag::run(bool& sendPacket) noexcept
