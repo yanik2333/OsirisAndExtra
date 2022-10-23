@@ -1,16 +1,42 @@
+#include <random>
+
 #include "Fakelag.h"
 #include "EnginePrediction.h"
 #include "Tickbase.h"
-#include "../random_generator.h"
 
 #include "../SDK/Entity.h"
 #include "../SDK/Localplayer.h"
 #include "../SDK/NetworkChannel.h"
 #include "../SDK/UserCmd.h"
 #include "../SDK/Vector.h"
+#undef min
+#undef max
 
 namespace Fakelag
 {
+    template <typename T>
+    class random_generator
+    {
+        std::uniform_int_distribution<T> distribution;
+        std::default_random_engine random_engine;
+    public:
+    	explicit random_generator(const unsigned seed) : distribution{}, random_engine{ seed }
+        {
+        }
+        random_generator(const T min, const T max, const unsigned seed) : distribution{ min, max }, random_engine{ seed }
+        {
+        }
+        T get() const
+        {
+            return distribution(random_engine);
+        }
+        void set_range(T min, T max)
+        {
+            if (distribution.min() == min && distribution.max() == max)
+                return;
+            distribution = std::uniform_int_distribution<T>{ min, max };
+        }
+    };
     random_generator<int> random{ static_cast<unsigned>(std::chrono::high_resolution_clock::now().time_since_epoch().count()) };
 }
 
@@ -43,7 +69,6 @@ void Fakelag::run(bool& sendPacket) noexcept
 
     chokedPackets = std::clamp(chokedPackets, 0, maxUserCmdProcessTicks - Tickbase::getTargetTickShift());
 
-#undef min
     if (interfaces->engine->isVoiceRecording())
         sendPacket = netChannel->chokedPackets >= std::min(3, chokedPackets);
     else
