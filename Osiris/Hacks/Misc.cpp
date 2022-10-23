@@ -1272,13 +1272,26 @@ void Misc::fakeDuck(UserCmd* cmd, bool& sendPacket) noexcept
     if (!netChannel)
         return;
 
-    cmd->buttons |= UserCmd::IN_BULLRUSH;
-    const bool crouch = netChannel->chokedPackets >= (maxUserCmdProcessTicks / 2);
-    if (crouch)
+    sendPacket = false;
+    static bool down = false;
+    switch (cmd->tickCount % 14)
+    {
+    case 0:
+        down = true;
+        break;
+    case 6:
+        sendPacket = true;
+        break;
+    case 7:
+        down = false;
+        break;
+    }
+    if (netChannel->chokedPackets > 8)
+        cmd->buttons &= ~UserCmd::IN_ATTACK;
+    if (down)
         cmd->buttons |= UserCmd::IN_DUCK;
     else
         cmd->buttons &= ~UserCmd::IN_DUCK;
-    sendPacket = netChannel->chokedPackets >= maxUserCmdProcessTicks;
 }
 
 
@@ -1356,7 +1369,7 @@ void Misc::updateClanTag(bool tagChanged) noexcept
     }
     
     static auto lastTime = 0.0f;
-
+    int time = memory->globalVars->currenttime * M_PI;
     if (config->misc.clocktag) {
         if (memory->globalVars->realtime - lastTime < 1.0f)
             return;
@@ -1377,7 +1390,7 @@ void Misc::updateClanTag(bool tagChanged) noexcept
             if (offset != -1 && static_cast<std::size_t>(offset) <= clanTag.length())
                 std::rotate(clanTag.begin(), clanTag.begin() + offset, clanTag.end());
         }
-        lastTime = memory->globalVars->realtime;
+        lastTime = time;
         memory->setClanTag(clanTag.c_str(), clanTag.c_str());
     }
 }
@@ -2136,6 +2149,17 @@ void Misc::killSound(GameEvent& event) noexcept
         interfaces->engine->clientCmdUnrestricted(killSounds[config->misc.killSound - 1]);
     else if (config->misc.killSound == 5)
         interfaces->engine->clientCmdUnrestricted(("play " + config->misc.customKillSound).c_str());
+}
+
+void Misc::grenadeAnimationCancel(GameEvent& event) noexcept
+{
+    if (!config->misc.nadeAnimationCancel)
+        return;
+    if (!localPlayer || !localPlayer->isAlive())
+        return;
+    if (localPlayer->getUserId() != event.getInt("userid"))
+        return;
+    interfaces->engine->clientCmdUnrestricted("slot3; slot2; slot1");
 }
 
 void Misc::autoBuy(GameEvent* event) noexcept

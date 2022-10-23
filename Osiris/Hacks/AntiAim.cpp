@@ -1,3 +1,5 @@
+#include <random>
+
 #include "../Interfaces.h"
 
 #include "AimbotFunctions.h"
@@ -8,6 +10,38 @@
 #include "../SDK/EntityList.h"
 #include "../SDK/NetworkChannel.h"
 #include "../SDK/UserCmd.h"
+
+#undef min
+#undef max
+template <typename T>
+class uniform_real_random_generator
+{
+    std::uniform_real_distribution<T> distribution;
+    std::default_random_engine random_engine;
+public:
+    explicit uniform_real_random_generator(const unsigned seed) : distribution{ 0,RAND_MAX }, random_engine{ seed }
+    {
+    }
+
+    uniform_real_random_generator(const T min, const T max, const unsigned seed) : distribution{ min, max }, random_engine{ seed }
+    {
+    }
+
+    [[nodiscard]] T get()
+    {
+        return distribution(random_engine);
+    }
+
+    void set_range(const T min, const T max)
+    {
+        if (distribution.min() == min && distribution.max() == max)
+            return;
+        distribution = std::uniform_int_distribution{ min, max };
+    }
+};
+uniform_real_random_generator<float> random{ static_cast<unsigned>(std::chrono::high_resolution_clock::now().time_since_epoch().count()) };
+#define min(a,b)            (((a) < (b)) ? (a) : (b))
+#define max(a,b)            (((a) > (b)) ? (a) : (b))
 
 bool updateLby(bool update = false) noexcept
 {
@@ -36,6 +70,7 @@ bool updateLby(bool update = false) noexcept
     return false;
 }
 
+bool invert{ false };
 bool autoDirection(Vector eyeAngle) noexcept
 {
     constexpr float maxRange{ 8192.0f };
@@ -74,8 +109,14 @@ bool autoDirection(Vector eyeAngle) noexcept
     return true;
 }
 
+float random_float(const float a, const float b, const float multiplier)
+{
+    return a + random.get() / static_cast<float>(RAND_MAX) * (b - a) * multiplier;
+}
+
 void AntiAim::rage(UserCmd* cmd, const Vector& previousViewAngles, const Vector& currentViewAngles, bool& sendPacket) noexcept
 {
+    rollaavalue = 0;
     if (cmd->viewangles.x == currentViewAngles.x && config->rageAntiAim.enabled)
     {
         switch (config->rageAntiAim.pitch)
@@ -94,6 +135,24 @@ void AntiAim::rage(UserCmd* cmd, const Vector& previousViewAngles, const Vector&
         default:
             break;
         }
+    }
+    if (cmd->viewangles.z == currentViewAngles.z && config->rageAntiAim.roll)
+    {
+        if (localPlayer->velocity().length2D() < 100.f && ~localPlayer->flags() & (1 << 1))
+        {
+            float roll = (*memory->gameRules)->isValveDS() ? random_float(0.f, 45.f, 1.f) : random_float(0.f, 60.f, 1.f);
+            config->rageAntiAim.rolling = true;
+        }
+        else
+        {
+            config->rageAntiAim.rolling = false;
+            rollaavalue = 0.f;
+        }
+    }
+    else if (!config->rageAntiAim.roll)
+    {
+        config->rageAntiAim.rolling = false;
+        rollaavalue = 0.f;
     }
     if (cmd->viewangles.y == currentViewAngles.y)
     {
@@ -131,10 +190,15 @@ void AntiAim::rage(UserCmd* cmd, const Vector& previousViewAngles, const Vector&
             if (config->rageAntiAim.yawBase != Yaw::spin)
                 staticYaw = 0.f;
 
+            bool isInvertToggled{ config->fakeAngle.invert.isActive() };
             switch (config->rageAntiAim.yawBase)
             {
-            case Yaw::forward:
-                yaw += 0.f;
+            case Yaw::forward:  // Paranoia
+                yaw += (isInvertToggled ? -11 : +11) + 180.f;
+                if (!autoDirection(cmd->viewangles))
+                    config->rageAntiAim.yawAdd = random_float(0.f, 33.f, 1.f);
+                else
+                    config->rageAntiAim.yawAdd = random_float(-33.f, 0.f, 1.f);
                 break;
             case Yaw::backward:
                 yaw += 180.f;
@@ -248,7 +312,9 @@ void AntiAim::rage(UserCmd* cmd, const Vector& previousViewAngles, const Vector&
             case 1: // Opposite (Lby break)
                 if (updateLby())
                 {
-                    cmd->viewangles.y += !invert ? leftDesyncAngle : rightDesyncAngle;
+                    float desyncAngleL{ random_float(45,leftDesyncAngle,1.f) };
+                    float desyncAgnleR{ random_float(45,rightDesyncAngle,1.f) };
+                    cmd->viewangles.y += !invert ? desyncAngleL : desyncAgnleR;
                     sendPacket = false;
                     return;
                 }
@@ -279,7 +345,7 @@ void AntiAim::legit(UserCmd* cmd, const Vector& previousViewAngles, const Vector
 {
     if (cmd->viewangles.y == currentViewAngles.y) 
     {
-        bool invert = config->legitAntiAim.invert.isActive();
+        invert = config->legitAntiAim.invert.isActive();
         float desyncAngle = localPlayer->getMaxDesyncAngle() * 2.f;
         if (updateLby() && config->legitAntiAim.extend)
         {
@@ -348,8 +414,8 @@ bool AntiAim::canRun(UserCmd* cmd) noexcept
     if (activeWeapon->isThrowing())
         return false;
 
-    if (activeWeapon->isGrenade())
-        return true;
+    if (activeWeapon->isGrenade() && cmd->buttons & (UserCmd::IN_ATTACK | UserCmd::IN_ATTACK2))
+        return false;
 
     if (localPlayer->shotsFired() > 0 && !activeWeapon->isFullAuto() || localPlayer->waitForNoAttack())
         return true;

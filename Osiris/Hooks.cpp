@@ -395,11 +395,10 @@ static bool __stdcall createMove(float inputSampleTime, UserCmd* cmd, bool& send
     Misc::edgeBug(cmd, angOldViewPoint);
     Misc::runFreeCam(cmd, viewAngles);
     Misc::moonwalk(cmd);
+    Resolver::cmdGrabber(cmd);
 
     auto viewAnglesDelta{ cmd->viewangles - previousViewAngles };
     viewAnglesDelta.normalize();
-    viewAnglesDelta.x = std::clamp(viewAnglesDelta.x, -config->misc.maxAngleDelta, config->misc.maxAngleDelta);
-    viewAnglesDelta.y = std::clamp(viewAnglesDelta.y, -config->misc.maxAngleDelta, config->misc.maxAngleDelta);
 
     cmd->viewangles = previousViewAngles + viewAnglesDelta;
 
@@ -414,7 +413,10 @@ static bool __stdcall createMove(float inputSampleTime, UserCmd* cmd, bool& send
 
     cmd->viewangles.x = std::clamp(cmd->viewangles.x, -89.0f, 89.0f);
     cmd->viewangles.y = std::clamp(cmd->viewangles.y, -180.0f, 180.0f);
-    cmd->viewangles.z = 0.0f;
+    if (config->rageAntiAim.rolling)
+        cmd->viewangles.z = std::clamp(cmd->viewangles.y, -45.0f, 45.0f);
+    else
+        cmd->viewangles.z = 0.f;
     cmd->forwardmove = std::clamp(cmd->forwardmove, -450.0f, 450.0f);
     cmd->sidemove = std::clamp(cmd->sidemove, -450.0f, 450.0f);
     cmd->upmove = std::clamp(cmd->upmove, -320.0f, 320.0f);

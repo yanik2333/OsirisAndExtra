@@ -23,11 +23,13 @@ EventListener::EventListener() noexcept
     interfaces->gameEventManager->addListener(this, "round_start");
     interfaces->gameEventManager->addListener(this, "round_freeze_end");
     interfaces->gameEventManager->addListener(this, "player_hurt");
+    interfaces->gameEventManager->addListener(this, "bullet_impact");
 
     interfaces->gameEventManager->addListener(this, "bomb_planted");
     interfaces->gameEventManager->addListener(this, "hostage_follows");
 
     interfaces->gameEventManager->addListener(this, "weapon_fire");
+    interfaces->gameEventManager->addListener(this, "grenade_thrown");
 
     interfaces->gameEventManager->addListener(this, "smokegrenade_detonate");
     interfaces->gameEventManager->addListener(this, "molotov_detonate");
@@ -74,17 +76,23 @@ void EventListener::fireGameEvent(GameEvent* event)
         Misc::playHitSound(*event);
         Visuals::hitEffect(event);
         Visuals::hitMarker(event);
+        break;
+    case fnv::hash("bullet_impact"):
         Logger::getEvent(event);
         Resolver::getEvent(event);
         break;
     case fnv::hash("weapon_fire"):
         Visuals::bulletTracer(*event);
+        Resolver::getEvent(event);
         break;
     case fnv::hash("vote_cast"):
         Misc::voteRevealer(*event);
         break;
     case fnv::hash("bomb_planted"):
         Logger::getEvent(event);
+        break;
+    case fnv::hash("grenade_thrown"):
+        Misc::grenadeAnimationCancel(*event);
         break;
     case fnv::hash("hostage_follows"):
         Logger::getEvent(event);

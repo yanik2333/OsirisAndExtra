@@ -15,16 +15,16 @@
 namespace Fakelag
 {
     template <typename T>
-    class random_generator
+    class uniform_int_random_generator
     {
         std::uniform_int_distribution<T> distribution;
         std::default_random_engine random_engine;
     public:
-        explicit random_generator(const unsigned seed) : distribution{}, random_engine{ seed }
+        explicit uniform_int_random_generator(const unsigned seed) : distribution{}, random_engine{ seed }
         {
         }
 
-        random_generator(const T min, const T max, const unsigned seed) : distribution{ min, max }, random_engine{ seed }
+        uniform_int_random_generator(const T min, const T max, const unsigned seed) : distribution{ min, max }, random_engine{ seed }
         {
         }
 
@@ -40,7 +40,7 @@ namespace Fakelag
             distribution = std::uniform_int_distribution{ min, max };
         }
     };
-	random_generator<int> random{ static_cast<unsigned>(std::chrono::high_resolution_clock::now().time_since_epoch().count()) };
+	uniform_int_random_generator<int> random{ static_cast<unsigned>(std::chrono::high_resolution_clock::now().time_since_epoch().count()) };
 }
 
 void Fakelag::run(bool& sendPacket) noexcept
@@ -51,9 +51,11 @@ void Fakelag::run(bool& sendPacket) noexcept
     const auto netChannel = interfaces->engine->getNetworkChannel();
     if (!netChannel)
         return;
+    if (EnginePrediction::getVelocity().length2D() < 1)
+        return;
 
     auto chokedPackets = config->legitAntiAim.enabled || config->fakeAngle.enabled ? 2 : 0;
-    if (config->fakelag.enabled)
+    if (config->fakelag.enabled && !config->tickbase.doubletap.isActive() && !config->tickbase.hideshots.isActive())
     {
         const float speed = EnginePrediction::getVelocity().length2D() >= 15.0f ? EnginePrediction::getVelocity().length2D() : 0.0f;
         switch (config->fakelag.mode) {

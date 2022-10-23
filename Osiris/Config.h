@@ -34,6 +34,7 @@ public:
 
     struct Ragebot {
         bool enabled{ false };
+        bool resolver{ false };
         bool aimlock{ false };
         bool silent{ false };
         bool friendlyFire{ false };
@@ -44,6 +45,7 @@ public:
         bool autoShot{ false };
         bool autoScope{ false };
         bool autoStop{ false };
+        bool killshot{ false };
         bool disableMultipointIfLowFPS{ false };
         bool disableBacktrackIfLowFPS{ false };
         bool betweenShots{ false };
@@ -67,6 +69,8 @@ public:
 
     struct RageAntiAimConfig {
         bool enabled = false;
+        bool roll = false;
+        bool rolling = false;
         int pitch = 0; //Off, Down, Zero, Up
         Yaw yawBase = Yaw::off;
         KeyBind manualForward{ std::string("manual forward"), KeyMode::Off },
@@ -353,6 +357,7 @@ public:
         bool disablePanoramablur{ false };
         bool killMessage{ false };
         bool nadePredict{ false };
+        bool nadeAnimationCancel{ false };
         bool fixTabletSignal{ false };
         bool fastPlant{ false };
         bool fastStop{ false };
@@ -402,7 +407,7 @@ public:
         Watermark watermark;
         float aspectratio{ 0 };
         std::string killMessageString{ "1" };
-        ColorToggle3 bombTimer{ 1.0f, 0.55f, 0.0f };
+        ColorToggle3 bombTimer{ 0.3f, 0.1f, 0.3f };
         ColorToggle3 hurtIndicator{ 0.0f, 0.8f, 0.7f };
         KeyBind prepareRevolverKey{ std::string("prepare revolver") };
         int hitSound{ 0 };

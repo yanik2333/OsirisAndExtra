@@ -444,6 +444,8 @@ void GUI::renderRagebotWindow() noexcept
     ImGui::Checkbox("Between shots", &config->ragebot[currentWeapon].betweenShots);
     ImGui::Checkbox("Disable multipoint if low fps", &config->ragebot[currentWeapon].disableMultipointIfLowFPS);
     ImGui::Checkbox("Disable backtrack if low fps", &config->ragebot[currentWeapon].disableBacktrackIfLowFPS);
+    ImGui::Checkbox("Killshot", &config->ragebot[currentWeapon].killshot);
+    ImGui::Checkbox("Resolver", &config->ragebot[currentWeapon].resolver);
     ImGui::Combo("Priority", &config->ragebot[currentWeapon].priority, "Health\0Distance\0Fov\0");
 
     for (size_t i = 0; i < ARRAYSIZE(hitbox); i++)
@@ -1921,6 +1923,7 @@ void GUI::renderMiscWindow() noexcept
     ImGui::SameLine();
     hotkey(config->misc.quickHealthshotKey);
     */
+    ImGui::Checkbox("Grenade animation cancel", &config->misc.nadeAnimationCancel);
     ImGui::Checkbox("Grenade Prediction", &config->misc.nadePredict);
     ImGui::SameLine();
     ImGui::PushID("Grenade Prediction");
