@@ -1,14 +1,18 @@
-#include <random>
-
-#include "EnginePrediction.h"
 #include "Fakelag.h"
+#include "EnginePrediction.h"
 #include "Tickbase.h"
+#include "../random_generator.h"
 
 #include "../SDK/Entity.h"
-#include "../SDK/UserCmd.h"
-#include "../SDK/NetworkChannel.h"
 #include "../SDK/Localplayer.h"
+#include "../SDK/NetworkChannel.h"
+#include "../SDK/UserCmd.h"
 #include "../SDK/Vector.h"
+
+namespace Fakelag
+{
+    random_generator<int> random{ static_cast<unsigned>(std::chrono::high_resolution_clock::now().time_since_epoch().count()) };
+}
 
 void Fakelag::run(bool& sendPacket) noexcept
 {
@@ -31,8 +35,8 @@ void Fakelag::run(bool& sendPacket) noexcept
             chokedPackets = std::clamp(static_cast<int>(std::ceilf(64 / (speed * memory->globalVars->intervalPerTick))), 1, config->fakelag.limit);
             break;
         case 2: // Random
-            srand(static_cast<unsigned int>(time(NULL)));
-            chokedPackets = rand() % config->fakelag.limit + 1;
+            random.set_range(1, config->fakelag.limit);
+            chokedPackets = random.get();
             break;
         }
     }
