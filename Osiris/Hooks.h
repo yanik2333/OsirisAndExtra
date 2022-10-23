@@ -57,8 +57,7 @@ public:
     MinHook clMove;
 
     MinHook getColorModulation;
-    // TODO: Experimental
-    // MinHook isUsingStaticPropDebugModes;
+    MinHook isUsingStaticPropDebugModes;
     MinHook traceFilterForHeadCollision;
     MinHook performScreenOverlay;
     MinHook postNetworkDataReceived;
