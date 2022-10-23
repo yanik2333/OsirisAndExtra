@@ -1551,7 +1551,7 @@ void Hooks::install() noexcept
     checkForSequenceChange.detour(memory->checkForSequenceChange, checkForSequenceChangeHook);
 
     getColorModulation.detour(memory->getColorModulation, getColorModulationHook);
-	isUsingStaticPropDebugModes.detour(memory->isUsingStaticPropDebugModes, isUsingStaticPropDebugModesHook);
+    isUsingStaticPropDebugModes.detour(memory->isUsingStaticPropDebugModes, isUsingStaticPropDebugModesHook);
 
     traceFilterForHeadCollision.detour(memory->traceFilterForHeadCollision, traceFilterForHeadCollisionHook);
     performScreenOverlay.detour(memory->performScreenOverlay, performScreenOverlayHook);
