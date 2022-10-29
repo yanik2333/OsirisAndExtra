@@ -116,7 +116,6 @@ float random_float(const float a, const float b, const float multiplier)
 
 void AntiAim::rage(UserCmd* cmd, const Vector& previousViewAngles, const Vector& currentViewAngles, bool& sendPacket) noexcept
 {
-    rollaavalue = 0;
     if (cmd->viewangles.x == currentViewAngles.x && config->rageAntiAim.enabled)
     {
         switch (config->rageAntiAim.pitch)
@@ -135,24 +134,6 @@ void AntiAim::rage(UserCmd* cmd, const Vector& previousViewAngles, const Vector&
         default:
             break;
         }
-    }
-    if (cmd->viewangles.z == currentViewAngles.z && config->rageAntiAim.roll)
-    {
-        if (localPlayer->velocity().length2D() < 100.f && ~localPlayer->flags() & (1 << 1))
-        {
-            float roll = (*memory->gameRules)->isValveDS() ? random_float(0.f, 45.f, 1.f) : random_float(0.f, 60.f, 1.f);
-            config->rageAntiAim.rolling = true;
-        }
-        else
-        {
-            config->rageAntiAim.rolling = false;
-            rollaavalue = 0.f;
-        }
-    }
-    else if (!config->rageAntiAim.roll)
-    {
-        config->rageAntiAim.rolling = false;
-        rollaavalue = 0.f;
     }
     if (cmd->viewangles.y == currentViewAngles.y)
     {

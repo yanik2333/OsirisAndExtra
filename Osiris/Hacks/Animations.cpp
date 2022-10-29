@@ -33,7 +33,6 @@ static bool gotMatrix{ false };
 static bool gotMatrixFakelag{ false };
 static bool gotMatrixReal{ false };
 static Vector viewangles{};
-static Vector sentViewangles{};
 static Vector correctAngle{};
 static int buildTransformsIndex = -1;
 static std::array<AnimationLayer, 13> staticLayers{};
@@ -43,9 +42,6 @@ static float moveWeight{ 0.0f };
 static float footYaw{};
 static std::array<float, 24> poseParameters{};
 static std::array<AnimationLayer, 13> sendPacketLayers{};
-static VmtSwap vmt{};
-static Entity* oldLocal{ nullptr };
-static bool isHooked{ false };
 
 void Animations::init() noexcept
 {
@@ -54,14 +50,6 @@ void Animations::init() noexcept
 
     static auto extrapolate = interfaces->cvar->findVar("cl_extrapolate");
     extrapolate->setValue(0);
-}
-
-static Vector* __fastcall getEyeAngles(Entity* entity, uint32_t edx) noexcept
-{
-    static auto original{ vmt.getOriginal<Vector*,178>() };
-    if (reinterpret_cast<std::uintptr_t>(_ReturnAddress()) != memory->eyePositionAndVectors)
-        return original(entity);
-    return &sentViewangles;
 }
 
 void Animations::reset() noexcept
@@ -125,15 +113,6 @@ void Animations::update(UserCmd* cmd, bool& _sendPacket) noexcept
     viewangles = cmd->viewangles;
     sendPacket = _sendPacket;
     localPlayer->getAnimstate()->buttons = cmd->buttons;
-    if (sendPacket)
-        sentViewangles = cmd->viewangles;
-    if (!isHooked || oldLocal != localPlayer.get())
-    {
-        oldLocal = localPlayer.get();
-        vmt.init(localPlayer.get());
-        vmt.hookAt(170, getEyeAngles);
-        isHooked = true;
-    }
     updatingLocal = true;
 
     // allow animations to be animated in the same frame
@@ -232,7 +211,7 @@ void Animations::fake() noexcept
             memory->setAbsAngle(localPlayer.get(), Vector{ 0,backupAbs.y,0 });
             return;
         }
-        memory->setAbsAngle(localPlayer.get(), Vector{ 0, fakeAnimState->footYaw, AntiAim::rollaavalue });
+        memory->setAbsAngle(localPlayer.get(), Vector{ 0, fakeAnimState->footYaw, 0 });
         std::memcpy(localPlayer->animOverlays(), &layers, sizeof(AnimationLayer) * localPlayer->getAnimationLayersCount());
         localPlayer->getAnimationLayer(ANIMATION_LAYER_LEAN)->weight = std::numeric_limits<float>::epsilon();
         
@@ -252,7 +231,7 @@ void Animations::fake() noexcept
 
         std::memcpy(localPlayer->animOverlays(), &layers, sizeof(AnimationLayer) * localPlayer->getAnimationLayersCount());
         localPlayer->poseParameters() = backupPoses;
-        memory->setAbsAngle(localPlayer.get(), Vector{ 0,backupAbs.y,backupAbs.z });
+        memory->setAbsAngle(localPlayer.get(), Vector{ 0,backupAbs.y,0 });
 
         updatingFake = false;
     }
@@ -712,15 +691,6 @@ Vector* Animations::getViewAngles() noexcept
 Vector* Animations::getLocalAngle() noexcept
 {
     return &localAngle;
-}
-
-void Animations::restore() noexcept
-{
-	if(isHooked)
-	{
-        vmt.restore();
-        isHooked = false;
-	}
 }
 
 bool Animations::isLocalUpdating() noexcept

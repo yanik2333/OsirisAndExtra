@@ -597,14 +597,6 @@ void Resolver::antiOnetap(const int userid, Entity* entity, const Vector shot)
 				if (const float fov = sqrt(delta.x * delta.x + delta.y * delta.y); fov < 20.f)
 				{
 					Logger::addLog("Resolver: " + player.name + " missed");
-					if (config->rageAntiAim.roll)
-					{
-						config->rageAntiAim.roll = false;
-					}
-					else
-					{
-						config->rageAntiAim.roll = true;
-					}
 				}
 			}
 		}

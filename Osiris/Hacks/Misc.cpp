@@ -2151,17 +2151,6 @@ void Misc::killSound(GameEvent& event) noexcept
         interfaces->engine->clientCmdUnrestricted(("play " + config->misc.customKillSound).c_str());
 }
 
-void Misc::grenadeAnimationCancel(GameEvent& event) noexcept
-{
-    if (!config->misc.nadeAnimationCancel)
-        return;
-    if (!localPlayer || !localPlayer->isAlive())
-        return;
-    if (localPlayer->getUserId() != event.getInt("userid"))
-        return;
-    interfaces->engine->clientCmdUnrestricted("slot3; slot2; slot1");
-}
-
 void Misc::autoBuy(GameEvent* event) noexcept
 {
     static const std::array<std::string, 17> primary = {

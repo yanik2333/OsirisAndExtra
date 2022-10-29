@@ -245,7 +245,6 @@ static void from_json(const json& j, Config::Legitbot& a)
     read(j, "Reaction time", a.reactionTime);
     read(j, "Hitboxes", a.hitboxes);
     read(j, "Min damage", a.minDamage);
-    read(j, "Killshot", a.killshot);
     read(j, "Between shots", a.betweenShots);
 }
 
@@ -272,7 +271,6 @@ static void from_json(const json& j, Config::Ragebot& r)
     read(j, "Auto shot", r.autoShot);
     read(j, "Auto scope", r.autoScope);
     read(j, "Auto stop", r.autoStop);
-    read(j, "Killshot", r.killshot);
     read(j, "Between shots", r.betweenShots);
     read(j, "Disable multipoint if low fps", r.disableMultipointIfLowFPS);
     read(j, "Disable backtrack if low fps", r.disableBacktrackIfLowFPS);
@@ -310,7 +308,6 @@ static void from_json(const json& j, Config::RageAntiAimConfig& a)
 {
     read(j, "Enabled", a.enabled);
     read(j, "Pitch", a.pitch);
-    read(j, "Roll", a.roll);
     read(j, "Yaw base", reinterpret_cast<int&>(a.yawBase));
     read(j, "Manual forward Key", a.manualForward);
     read(j, "Manual backward Key", a.manualBackward);
@@ -703,7 +700,6 @@ static void from_json(const json& j, Config::Misc& m)
     read(j, "Quick healthshot key", m.quickHealthshotKey);
     read(j, "Grenade predict", m.nadePredict);
     read<value_t::object>(j, "Grenade predict Damage", m.nadeDamagePredict);
-    read(j, "Grenade animation cancel", m.nadeAnimationCancel);
     read<value_t::object>(j, "Grenade predict Trail", m.nadeTrailPredict);
     read<value_t::object>(j, "Grenade predict Circle", m.nadeCirclePredict);
     read(j, "Max angle delta", m.maxAngleDelta);
@@ -973,7 +969,6 @@ static void to_json(json& j, const Config::Ragebot& o, const Config::Ragebot& du
     WRITE("Auto shot", autoShot);
     WRITE("Auto scope", autoScope);
     WRITE("Auto stop", autoStop);
-    WRITE("Killshot", killshot);
     WRITE("Resolver", resolver);
     WRITE("Between shots", betweenShots);
     WRITE("Disable multipoint if low fps", disableMultipointIfLowFPS);
@@ -1069,7 +1064,6 @@ static void to_json(json& j, const Config::LegitAntiAimConfig& o, const Config::
 static void to_json(json& j, const Config::RageAntiAimConfig& o, const Config::RageAntiAimConfig& dummy = {})
 {
     WRITE("Enabled", enabled);
-    WRITE("Roll", roll);
     WRITE("Pitch", pitch);
     WRITE_ENUM("Yaw base", yawBase);
     to_json(j["Manual forward Key"], o.manualForward, KeyBind::NONE);
@@ -1344,7 +1338,6 @@ static void to_json(json& j, const Config::Misc& o)
     WRITE("Quick healthshot key", quickHealthshotKey);
     WRITE("Grenade predict", nadePredict);
     WRITE("Grenade predict Damage", nadeDamagePredict);
-    WRITE("Grenade animation cancel", nadeAnimationCancel);
     WRITE("Grenade predict Trail", nadeTrailPredict);
     WRITE("Grenade predict Circle", nadeCirclePredict);
     WRITE("Max angle delta", maxAngleDelta);

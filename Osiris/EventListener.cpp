@@ -29,7 +29,6 @@ EventListener::EventListener() noexcept
     interfaces->gameEventManager->addListener(this, "hostage_follows");
 
     interfaces->gameEventManager->addListener(this, "weapon_fire");
-    interfaces->gameEventManager->addListener(this, "grenade_thrown");
 
     interfaces->gameEventManager->addListener(this, "smokegrenade_detonate");
     interfaces->gameEventManager->addListener(this, "molotov_detonate");
@@ -90,9 +89,6 @@ void EventListener::fireGameEvent(GameEvent* event)
         break;
     case fnv::hash("bomb_planted"):
         Logger::getEvent(event);
-        break;
-    case fnv::hash("grenade_thrown"):
-        Misc::grenadeAnimationCancel(*event);
         break;
     case fnv::hash("hostage_follows"):
         Logger::getEvent(event);

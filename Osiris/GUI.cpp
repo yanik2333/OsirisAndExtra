@@ -444,7 +444,6 @@ void GUI::renderRagebotWindow() noexcept
     ImGui::Checkbox("Between shots", &config->ragebot[currentWeapon].betweenShots);
     ImGui::Checkbox("Disable multipoint if low fps", &config->ragebot[currentWeapon].disableMultipointIfLowFPS);
     ImGui::Checkbox("Disable backtrack if low fps", &config->ragebot[currentWeapon].disableBacktrackIfLowFPS);
-    ImGui::Checkbox("Killshot", &config->ragebot[currentWeapon].killshot);
     ImGui::Checkbox("Resolver", &config->ragebot[currentWeapon].resolver);
     ImGui::Combo("Priority", &config->ragebot[currentWeapon].priority, "Health\0Distance\0Fov\0");
 
@@ -1923,7 +1922,6 @@ void GUI::renderMiscWindow() noexcept
     ImGui::SameLine();
     hotkey(config->misc.quickHealthshotKey);
     */
-    ImGui::Checkbox("Grenade animation cancel", &config->misc.nadeAnimationCancel);
     ImGui::Checkbox("Grenade Prediction", &config->misc.nadePredict);
     ImGui::SameLine();
     ImGui::PushID("Grenade Prediction");
@@ -2560,7 +2558,7 @@ void GUI::renderGuiStyle() noexcept
                     ImGui::BeginChild("##Text", ImVec2{ 700, 20 }, false);
                     {
                         ImGui::SetCursorPos(ImVec2{ 2, 2 });
-                        ImGui::Text("Better Osiris Made In https://github.com/LaptisMinecraft/OsirisAndExtra");
+                        ImGui::Text("Better Osiris Made In https://github.com/MesuDevastator/OsirisAndExtra");
                     }
                     ImGui::EndChild();
                 }

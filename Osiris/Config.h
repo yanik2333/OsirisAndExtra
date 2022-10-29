@@ -45,7 +45,6 @@ public:
         bool autoShot{ false };
         bool autoScope{ false };
         bool autoStop{ false };
-        bool killshot{ false };
         bool disableMultipointIfLowFPS{ false };
         bool disableBacktrackIfLowFPS{ false };
         bool betweenShots{ false };
@@ -69,8 +68,6 @@ public:
 
     struct RageAntiAimConfig {
         bool enabled = false;
-        bool roll = false;
-        bool rolling = false;
         int pitch = 0; //Off, Down, Zero, Up
         Yaw yawBase = Yaw::off;
         KeyBind manualForward{ std::string("manual forward"), KeyMode::Off },
@@ -357,7 +354,6 @@ public:
         bool disablePanoramablur{ false };
         bool killMessage{ false };
         bool nadePredict{ false };
-        bool nadeAnimationCancel{ false };
         bool fixTabletSignal{ false };
         bool fastPlant{ false };
         bool fastStop{ false };
