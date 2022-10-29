@@ -1153,6 +1153,80 @@ void Visuals::drawSmokeHull(ImDrawList* drawList) noexcept
     }
 }
 
+static float ccw(const Vector& a, const Vector& b, const Vector& c)
+{
+    return (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);
+}
+
+struct ccw_sorter
+{
+    const Vector& pivot;
+
+    explicit ccw_sorter(const Vector& in_pivot) : pivot{ in_pivot } {}
+
+    bool operator()(const Vector& a, const Vector& b) const
+    {
+        return ccw(pivot, a, b) < 0;
+    }
+};
+
+static bool is_left_of(const Vector& a, const Vector& b)
+{
+    return a.x < b.x || a.x == b.x && a.y < b.y;
+}
+
+static std::vector<Vector> gift_wrapping(std::vector<Vector> v)
+{
+    std::vector<Vector> hull;
+    if (v.size() < 3)
+        return hull;
+    std::swap(v[0], *std::ranges::min_element(v, is_left_of));
+    do
+    {
+        hull.push_back(v[0]);
+        std::swap(v[0], *std::min_element(v.begin() + 1, v.end(), ccw_sorter{ v[0] }));
+    } while (v[0].x != hull[0].x && v[0].y != hull[0].y);
+    return hull;
+}
+
+void Visuals::drawMolotovPolygon(ImDrawList* draw_list) noexcept
+{
+    if (!config->visuals.molotovPolygon.enabled)
+        return;
+    const unsigned int color = Helpers::calculateColor(static_cast<Color4>(config->visuals.molotovPolygon));
+    constexpr float pi{ std::numbers::pi_v<float> };
+    GameData::Lock lock;
+    auto flame_circumference = [](const std::vector<Vector> points)
+    {
+        std::vector<Vector> new_points{};
+        for (size_t i{}; i < points.size(); i++)
+        {
+            const Vector& pos = points[i];
+            for (int j = 0; j <= 3; j++)
+            {
+                const float p = static_cast<float>(j) * (360.0f / 4.0f) * (pi / 200.0f);
+                new_points.emplace_back(pos + Vector{ std::cos(p) * 60.f, std::sin(p) * 60.f, 0.f });
+            }
+        }
+        return new_points;
+    };
+    for (const InfernoData& molotov : GameData::infernos())
+    {
+        std::vector gift_wrapped{ gift_wrapping(flame_circumference(molotov.points)) };
+        std::vector<ImVec2> points{};
+        for (size_t i{}; i < gift_wrapped.size(); i++)
+        {
+            const Vector& pos = gift_wrapped[i];
+            ImVec2 screen_pos{};
+            if (!Helpers::worldToScreen(pos, screen_pos))
+                continue;
+            points.emplace_back(ImVec2{ screen_pos.x, screen_pos.y });
+        }
+        draw_list->AddConvexPolyFilled(points.data(), points.size(), color);
+    }
+}
+
+
 void Visuals::updateEventListeners(bool forceRemove) noexcept
 {
     class ImpactEventListener : public GameEventListener {
