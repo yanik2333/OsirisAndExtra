@@ -221,5 +221,5 @@ void Logger::addLog(std::string logText) noexcept
 
     logs.push_front(log);
     renderLogs.push_front(log);
-    memory->clientMode->getHudChat()->printf(0, " \x0C\u2022Osiris\u2022 %s", logText);
+    memory->clientMode->getHudChat()->printf(0, " \x0C\u2022Osiris\u2022\x01 %s", logText);
 }

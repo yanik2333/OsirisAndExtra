@@ -331,7 +331,7 @@ void GUI::renderLegitbotWindow() noexcept
         }
     }
     ImGui::Checkbox("Killshot", &config->legitbot[currentWeapon].killshot);
-    config->aimbot[currentWeapon].shotsFired = std::clamp(config->aimbot[currentWeapon].shotsFired, 0, 150);
+    config->legitbot[currentWeapon].shotsFired = std::clamp(config->legitbot[currentWeapon].shotsFired, 0, 150);
     ImGui::Checkbox("Between shots", &config->legitbot[currentWeapon].betweenShots);
 }
 
