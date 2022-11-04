@@ -4,6 +4,7 @@
 
 #include "Platform.h"
 #include "UtlVector.h"
+#include "Pad.h"
 #include "VirtualMethod.h"
 
 struct ConVar {
@@ -13,17 +14,11 @@ struct ConVar {
     VIRTUAL_METHOD(void, setValue, 15, (float value), (this, value))
     VIRTUAL_METHOD(void, setValue, 16, (int value), (this, value))
 
-    std::byte pad[24];
+    PAD(24)
     std::add_pointer_t<void __cdecl()> changeCallback;
     ConVar* parent;
     const char* defaultValue;
     char* string;
-    int stringLength;
-    float floatValue;
-    int intValue;
-    int hasMin;
-    float minValue;
-    int hasMax;
-    float maxValue;
+    PAD(44)
     UtlVector<void(__cdecl*)()> onChangeCallbacks;
 };
