@@ -260,7 +260,6 @@ void Visuals::drawAimbotFov(ImDrawList* drawList) noexcept
             return;
 
         const auto color = Helpers::calculateColor(config->legitbotFov);
-        if (config->legitbotFov.outline)
             drawList->AddCircle(localPlayer->shotsFired() > 1 ? pos : displaySize / 2.0f, radius, color | IM_COL32_A_MASK, 360);
     }
 }
