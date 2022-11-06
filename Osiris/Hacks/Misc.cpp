@@ -1795,13 +1795,13 @@ void Misc::yawIndicator(ImDrawList* drawList) noexcept
     }
     ImVec2 pos{ ImGui::GetIO().DisplaySize / 2 };
     ImU32 col{ Helpers::calculateColor(static_cast<Color4>(config->misc.yawIndicator)) };
-    if (config->rageAntiAim.manualForward.isDown())
+    if (config->rageAntiAim.manualForward.isToggled())
         drawList->AddTriangleFilled(pos + ImVec2{ -20, -20 }, pos + ImVec2{ 20, -20 }, pos + ImVec2{ 0, -50 }, col);
-    if (config->rageAntiAim.manualBackward.isDown())
+    if (config->rageAntiAim.manualBackward.isToggled())
         drawList->AddTriangleFilled(pos + ImVec2{ -20, 20 }, pos + ImVec2{ 20, 20 }, pos + ImVec2{ 0, 50 }, col);
-    if (config->rageAntiAim.manualRight.isDown())
+    if (config->rageAntiAim.manualRight.isToggled())
         drawList->AddTriangleFilled(pos + ImVec2{ 20, 20 }, pos + ImVec2{ 20, -20 }, pos + ImVec2{ 50, 0 }, col);
-    if (config->rageAntiAim.manualLeft.isDown())
+    if (config->rageAntiAim.manualLeft.isToggled())
         drawList->AddTriangleFilled(pos + ImVec2{ -20, 20 }, pos + ImVec2{ -20, -20 }, pos + ImVec2{ -50, 0 }, col);
 }
 
