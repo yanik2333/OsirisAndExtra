@@ -19,7 +19,7 @@ class uniform_real_random_generator
     std::uniform_real_distribution<T> distribution;
     std::default_random_engine random_engine;
 public:
-    explicit uniform_real_random_generator(const unsigned seed) : distribution{ 0,RAND_MAX }, random_engine{ seed }
+    explicit uniform_real_random_generator(const unsigned seed) : distribution{ 0, RAND_MAX }, random_engine{ seed }
     {
     }
 
@@ -41,7 +41,6 @@ public:
 };
 uniform_real_random_generator<float> random{ static_cast<unsigned>(std::chrono::high_resolution_clock::now().time_since_epoch().count()) };
 #define min(a,b)            (((a) < (b)) ? (a) : (b))
-#define max(a,b)            (((a) > (b)) ? (a) : (b))
 
 bool updateLby(bool update = false) noexcept
 {
