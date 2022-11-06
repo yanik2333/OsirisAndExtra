@@ -114,6 +114,7 @@ static HRESULT __stdcall present(IDirect3DDevice9* device, const RECT* src, cons
         Visuals::drawAimbotFov(ImGui::GetBackgroundDrawList());
         Misc::drawOffscreenEnemies(ImGui::GetBackgroundDrawList());
         Misc::drawBombTimer();
+        Misc::yawIndicator(ImGui::GetBackgroundDrawList());
         Misc::hurtIndicator();
         Misc::spectatorList();
         Misc::showKeybinds();
