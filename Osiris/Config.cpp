@@ -1351,8 +1351,8 @@ static void to_json(json& j, const Config::Misc& o)
     WRITE("Autobuy", autoBuy);
     WRITE("Logger", logger);
     WRITE("Logger options", loggerOptions);
-
-    WRITE("Custom name", customClanTag);
+    WRITE("Custom clantag", customClanTag);
+    WRITE("Custom name", customName);
 
     if (o.clanTag[0])
         j["Name"] = o.name;

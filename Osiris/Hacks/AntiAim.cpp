@@ -173,12 +173,12 @@ void AntiAim::rage(UserCmd* cmd, const Vector& previousViewAngles, const Vector&
             bool isInvertToggled{ config->fakeAngle.invert.isActive() };
             switch (config->rageAntiAim.yawBase)
             {
-            case Yaw::forward:  // Paranoia
+            case Yaw::paranoia:  // Paranoia
                 yaw += (isInvertToggled ? -11 : +11) + 180.f;
                 if (!autoDirection(cmd->viewangles))
-                    config->rageAntiAim.yawAdd = random_float(0.f, 33.f, 1.f);
+                    config->rageAntiAim.yawAdd = random_float(0.f, 25.f, 1.f);
                 else
-                    config->rageAntiAim.yawAdd = random_float(-33.f, 0.f, 1.f);
+                    config->rageAntiAim.yawAdd = random_float(-25.f, 0.f, 1.f);
                 break;
             case Yaw::backward:
                 yaw += 180.f;

@@ -199,7 +199,7 @@ struct BulletTracers : ColorToggle {
 
 enum class Yaw {
     off,
-    forward,
+    paranoia,
     backward,
     right,
     left,
