@@ -1917,6 +1917,7 @@ void GUI::renderMiscWindow() noexcept
     ImGui::Checkbox("Fast Stop", &config->misc.fastStop);
     ImGuiCustom::colorPicker("Bomb timer", config->misc.bombTimer);
     ImGuiCustom::colorPicker("Hurt indicator", config->misc.hurtIndicator);
+    ImGuiCustom::colorPicker("Yaw indicator", config->misc.yawIndicator);
     ImGui::Checkbox("Prepare revolver", &config->misc.prepareRevolver);
     ImGui::SameLine();
     ImGui::PushID("Prepare revolver Key");

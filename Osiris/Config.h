@@ -6,12 +6,11 @@
 #include <string>
 #include <unordered_map>
 
-#include "imgui/imgui.h"
-
-#include "Hacks/SkinChanger.h"
-
 #include "ConfigStructs.h"
 #include "InputUtil.h"
+#include "Hacks/AntiAim.h"
+#include "Hacks/SkinChanger.h"
+#include "imgui/imgui.h"
 
 class Config {
 public:
@@ -70,10 +69,10 @@ public:
         bool enabled = false;
         int pitch = 0; //Off, Down, Zero, Up
         Yaw yawBase = Yaw::off;
-        KeyBind manualForward{ std::string("manual forward"), KeyMode::Off },
-            manualBackward{ std::string("manual backward"), KeyMode::Off },
-            manualRight{ std::string("manual right"), KeyMode::Off },
-            manualLeft{ std::string("manual left"), KeyMode::Off };
+        KeyBind manualForward{ std::string("manual forward"), Off},
+            manualBackward{ std::string("manual backward"), Off },
+            manualRight{ std::string("manual right"), Off },
+            manualLeft{ std::string("manual left"), Off };
         int yawModifier = 0; //Off, Jitter
         int yawAdd = 0; //-180/180
         int spinBase = 0; //-180/180
@@ -404,6 +403,7 @@ public:
         std::string killMessageString{ "1" };
         ColorToggle3 bombTimer{ 0.3f, 0.1f, 0.3f };
         ColorToggle3 hurtIndicator{ 0.0f, 0.8f, 0.7f };
+        ColorToggle yawIndicator{ 0.47f, 0.32f, 0.66f, 0.8f };
         KeyBind prepareRevolverKey{ std::string("prepare revolver") };
         int hitSound{ 0 };
         int quickHealthshotKey{ 0 };

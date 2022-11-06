@@ -49,6 +49,7 @@ namespace Misc
     void fastStop(UserCmd*) noexcept;
     void drawBombTimer() noexcept;
     void hurtIndicator() noexcept;
+    void yawIndicator(ImDrawList* drawList) noexcept;
     void stealNames() noexcept;
     void disablePanoramablur() noexcept;
     bool changeName(bool, const char*, float) noexcept;
