@@ -697,10 +697,16 @@ void GUI::renderRageAntiAimWindow() noexcept
     ImGui::Columns(2, nullptr, false);
     ImGui::SetColumnOffset(1, 300.f);
     ImGui::Checkbox("Enabled", &config->rageAntiAim.enabled);
-    ImGui::Checkbox("Disable in freeztime", &config->disableInFreezetime);
+    ImGui::Checkbox("Disable in freezetime", &config->disableInFreezetime);
     ImGui::Combo("Pitch", &config->rageAntiAim.pitch, "Off\0Down\0Zero\0Up\0");
     ImGui::Combo("Yaw base", reinterpret_cast<int*>(&config->rageAntiAim.yawBase), "Off\0Paranoia\0Backward\0Right\0Left\0Spin\0");
     ImGui::Combo("Yaw modifier", reinterpret_cast<int*>(&config->rageAntiAim.yawModifier), "Off\0Jitter\0");
+
+    if (config->rageAntiAim.yawBase == Yaw::paranoia) {
+        ImGui::SliderInt("Paranoia min", &config->rageAntiAim.paranoiaMin, 0, 180, "%d");
+        ImGui::SliderInt("Paranoia max", &config->rageAntiAim.paranoiaMax, 0, 180, "%d");
+    }
+
     ImGui::PushItemWidth(220.0f);
     ImGui::SliderInt("Yaw add", &config->rageAntiAim.yawAdd, -180, 180, "%d");
     ImGui::PopItemWidth();

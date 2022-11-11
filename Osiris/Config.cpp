@@ -310,6 +310,8 @@ static void from_json(const json& j, Config::RageAntiAimConfig& a)
     read(j, "Manual right Key", a.manualRight);
     read(j, "Manual left Key", a.manualLeft);
     read(j, "Yaw modifier", a.yawModifier);
+    read(j, "Paranoia min", a.paranoiaMin);
+    read(j, "Paranoia max", a.paranoiaMax);
     read(j, "Yaw add", a.yawAdd);
     read(j, "Jitter Range", a.jitterRange);
     read(j, "Spin base", a.spinBase);
@@ -1066,6 +1068,8 @@ static void to_json(json& j, const Config::RageAntiAimConfig& o, const Config::R
     to_json(j["Manual right Key"], o.manualRight, KeyBind::NONE);
     to_json(j["Manual left Key"], o.manualLeft, KeyBind::NONE);
     WRITE("Yaw modifier", yawModifier);
+    WRITE("Paranoia min", paranoiaMin);
+    WRITE("Paranoia max", paranoiaMax);
     WRITE("Yaw add", yawAdd);
     WRITE("Jitter Range", jitterRange);
     WRITE("Spin base", spinBase);

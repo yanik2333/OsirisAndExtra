@@ -74,6 +74,8 @@ public:
             manualRight{ std::string("manual right"), Off },
             manualLeft{ std::string("manual left"), Off };
         int yawModifier = 0; //Off, Jitter
+        int paranoiaMin = 0;
+        int paranoiaMax = 0;
         int yawAdd = 0; //-180/180
         int spinBase = 0; //-180/180
         int jitterRange = 0;
