@@ -480,6 +480,7 @@ static void __stdcall doPostScreenEffects(void* param) noexcept
         Misc::inverseRagdollGravity();
         Visuals::remove3dSky();
         Glow::render();
+        Visuals::changeGlowThickness();
     }
     hooks->clientMode.callOriginal<void, 44>(param);
 }
