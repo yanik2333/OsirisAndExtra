@@ -63,6 +63,7 @@ public:
         bool enabled = false;
         int mode = 0;
         int limit = 1;
+        int randomMinLimit = 1;
     } fakelag;
 
     struct RageAntiAimConfig {

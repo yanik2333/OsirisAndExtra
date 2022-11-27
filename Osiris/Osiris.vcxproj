@@ -240,7 +240,7 @@
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
     <SpectreMitigation>false</SpectreMitigation>
-    <EnableASAN>true</EnableASAN>
+    <EnableASAN>false</EnableASAN>
     <EnableFuzzer>false</EnableFuzzer>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">

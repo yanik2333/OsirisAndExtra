@@ -174,11 +174,8 @@ void AntiAim::rage(UserCmd* cmd, const Vector& previousViewAngles, const Vector&
             switch (config->rageAntiAim.yawBase)
             {
             case Yaw::paranoia:
-                yaw += (isInvertToggled ? -11 : +11) + 180.f;
-                if (!autoDirection(cmd->viewangles))
-                    config->rageAntiAim.yawAdd = random_float(config->rageAntiAim.paranoiaMin, config->rageAntiAim.paranoiaMax, 1.f);
-                else
-                    config->rageAntiAim.yawAdd = random_float(-config->rageAntiAim.paranoiaMax, config->rageAntiAim.paranoiaMin, 1.f);
+                random.set_range(config->rageAntiAim.paranoiaMin, config->rageAntiAim.paranoiaMax);
+                yaw += random.get() + 180;
                 break;
             case Yaw::backward:
                 yaw += 180.f;

@@ -675,6 +675,7 @@ void GUI::renderFakelagWindow() noexcept
     ImGui::Combo("Mode", &config->fakelag.mode, "Static\0Adaptative\0Random\0");
     ImGui::PushItemWidth(220.0f);
     ImGui::SliderInt("Limit", &config->fakelag.limit, 1, 16, "%d");
+    ImGui::SliderInt("Random min limit", &config->fakelag.randomMinLimit, 1, 16, "%d");
     ImGui::PopItemWidth();
     ImGui::NextColumn();
     ImGui::Columns(1);
@@ -2209,7 +2210,10 @@ void GUI::renderMiscWindow() noexcept
 
     if (ImGui::Button("Unhook"))
         hooks->uninstall();
-
+    
+    static bool metrics_show{};
+    ImGui::Checkbox("Metrics", &metrics_show);
+    if (metrics_show) ImGui::ShowMetricsWindow(&metrics_show);
     ImGui::Columns(1);
 }
 

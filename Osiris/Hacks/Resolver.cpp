@@ -138,7 +138,7 @@ void Resolver::getEvent(GameEvent* event) noexcept
 
 void Resolver::processMissedShots() noexcept
 {
-	if (!config->ragebot[0].resolver)
+	if (!config->ragebot[getWeaponIndex(localPlayer->getActiveWeapon()->itemDefinitionIndex2())].resolver)
 	{
 		snapshots.clear();
 		return;

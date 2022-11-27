@@ -66,7 +66,7 @@ void Fakelag::run(bool& sendPacket) noexcept
             chokedPackets = std::clamp(static_cast<int>(std::ceilf(64 / (speed * memory->globalVars->intervalPerTick))), 1, config->fakelag.limit);
             break;
         case 2: // Random
-            random.set_range(1, config->fakelag.limit);
+            random.set_range(config->fakelag.randomMinLimit, config->fakelag.limit);
             chokedPackets = random.get();
             break;
         }
@@ -75,7 +75,7 @@ void Fakelag::run(bool& sendPacket) noexcept
     chokedPackets = std::clamp(chokedPackets, 0, maxUserCmdProcessTicks - Tickbase::getTargetTickShift());
 
     if (interfaces->engine->isVoiceRecording())
-        sendPacket = netChannel->chokedPackets >= std::min(3, chokedPackets);
+        sendPacket = netChannel->chokedPackets >= 0;
     else
         sendPacket = netChannel->chokedPackets >= chokedPackets;
 }

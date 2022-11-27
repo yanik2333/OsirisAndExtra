@@ -333,6 +333,7 @@ static void from_json(const json& j, Config::Fakelag& f)
     read(j, "Enabled", f.enabled);
     read(j, "Mode", f.mode);
     read(j, "Limit", f.limit);
+    read(j, "Random min limit", f.randomMinLimit);
 }
 
 static void from_json(const json& j, Config::Tickbase& t)
@@ -1092,6 +1093,7 @@ static void to_json(json& j, const Config::Fakelag& o, const Config::Fakelag& du
     WRITE("Enabled", enabled);
     WRITE("Mode", mode);
     WRITE("Limit", limit);
+    WRITE("Random min limit", randomMinLimit);
 }
 
 static void to_json(json& j, const Config::Tickbase& o, const Config::Tickbase& dummy = {})
