@@ -36,7 +36,7 @@ public:
     {
         if (distribution.min() == min && distribution.max() == max)
             return;
-        distribution = std::uniform_int_distribution{ min, max };
+        distribution = std::uniform_real_distribution{ min, max };
     }
 };
 uniform_real_random_generator<float> random{ static_cast<unsigned>(std::chrono::high_resolution_clock::now().time_since_epoch().count()) };
@@ -174,7 +174,7 @@ void AntiAim::rage(UserCmd* cmd, const Vector& previousViewAngles, const Vector&
             switch (config->rageAntiAim.yawBase)
             {
             case Yaw::paranoia:
-                random.set_range(config->rageAntiAim.paranoiaMin, config->rageAntiAim.paranoiaMax);
+                random.set_range(static_cast<float>(config->rageAntiAim.paranoiaMin), static_cast<float>(config->rageAntiAim.paranoiaMax));
                 yaw += random.get() + 180;
                 break;
             case Yaw::backward:
