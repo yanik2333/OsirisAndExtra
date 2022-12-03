@@ -75,6 +75,7 @@ static LRESULT __stdcall wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lP
 {
     [[maybe_unused]] static const auto once = [](HWND window) noexcept {
         Netvars::init();
+        Misc::initHiddenCvars();
         eventListener = std::make_unique<EventListener>();
 
         ImGui::CreateContext();
@@ -396,6 +397,7 @@ static bool __stdcall createMove(float inputSampleTime, UserCmd* cmd, bool& send
     Misc::jumpBug(cmd);
     Misc::edgeBug(cmd, angOldViewPoint);
     Misc::runFreeCam(cmd, viewAngles);
+    Misc::gatherDataOnTick(cmd);
     Misc::moonwalk(cmd);
     Resolver::cmdGrabber(cmd);
 
@@ -426,7 +428,6 @@ static bool __stdcall createMove(float inputSampleTime, UserCmd* cmd, bool& send
 
     if (localPlayer && localPlayer->isAlive())
         memory->restoreEntityToPredictedFrame(0, currentPredictedTick);
-    Misc::gatherDataOnTick(cmd);
     Misc::jumpStats(cmd);
     Animations::update(cmd, sendPacket);
     Animations::fake();
@@ -534,6 +535,7 @@ static void __stdcall frameStageNotify(FrameStage stage) noexcept
         GameData::update();
 
     if (stage == FrameStage::RENDER_START) {
+        Misc::unlockHiddenCvars();
         Misc::forceRelayCluster();
         Misc::preserveKillfeed();
         Misc::disablePanoramablur();

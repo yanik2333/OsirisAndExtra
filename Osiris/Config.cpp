@@ -717,6 +717,7 @@ static void from_json(const json& j, Config::Misc& m)
     read<value_t::object>(j, "Killfeed changer", m.killfeedChanger);
     read(j, "Sv pure bypass", m.svPureBypass);
     read(j, "Inventory Unlocker", m.inventoryUnlocker);
+    read(j, "Unlock hidden cvars", m.unhideConvars);
     read<value_t::object>(j, "Autobuy", m.autoBuy);
     read<value_t::object>(j, "Logger", m.logger);
     read<value_t::object>(j, "Logger options", m.loggerOptions);
@@ -760,6 +761,8 @@ void Config::load(const char8_t* name, bool incremental) noexcept
     read(j, "Legitbot", legitbot);
     read(j, "Legitbot Key", legitbotKey);
     read<value_t::object>(j, "Draw legitbot fov", legitbotFov);
+
+    read<value_t::object>(j, "Recoil control system", recoilControlSystem);
 
     read(j, "Ragebot", ragebot);
     read(j, "Ragebot Key", ragebotKey);
@@ -1355,6 +1358,7 @@ static void to_json(json& j, const Config::Misc& o)
     WRITE("Killfeed changer", killfeedChanger);
     WRITE("Sv pure bypass", svPureBypass);
     WRITE("Inventory Unlocker", inventoryUnlocker);
+    WRITE("Unlock hidden cvars", unhideConvars);
     WRITE("Autobuy", autoBuy);
     WRITE("Logger", logger);
     WRITE("Logger options", loggerOptions);
@@ -1500,6 +1504,8 @@ void Config::save(size_t id) const noexcept
         to_json(j["Legitbot Key"], legitbotKey, KeyBind::NONE);
         j["Draw legitbot fov"] = legitbotFov;
 
+        j["Recoil control system"] = recoilControlSystem;
+
         j["Ragebot"] = ragebot;
         to_json(j["Ragebot Key"], ragebotKey, KeyBind::NONE);
         to_json(j["Min damage override Key"], minDamageOverrideKey, KeyBind::NONE);
@@ -1557,6 +1563,7 @@ void Config::rename(size_t item, const char* newName) noexcept
 void Config::reset() noexcept
 {
     legitbot = { };
+    recoilControlSystem = { };
     legitAntiAim = { };
     ragebot = { };
     rageAntiAim = { };

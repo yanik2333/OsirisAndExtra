@@ -363,6 +363,7 @@ public:
         bool oppositeHandKnife = false;
         bool svPureBypass{ true };
         bool inventoryUnlocker{ false };
+        bool unhideConvars{ false };
         KillfeedChanger killfeedChanger;
         PreserveKillfeed preserveKillfeed;
         char clanTag[16];
