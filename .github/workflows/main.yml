@@ -34,7 +34,7 @@ jobs:
       working-directory: ${{env.GITHUB_WORKSPACE}}
       # Add additional options to the MSBuild command line here (like platform or verbosity level).
       # See https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference
-      run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}};Platform=${{env.BUILD_PLATFORM}} ${{env.SOLUTION_FILE_PATH}}
+      run: cmd /c "msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}};Platform=${{env.BUILD_PLATFORM}} ${{env.SOLUTION_FILE_PATH}}"
     - name: Upload
       uses: actions/upload-artifact@v3.1.1
       with:
