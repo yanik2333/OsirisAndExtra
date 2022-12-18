@@ -68,15 +68,15 @@ GUI::GUI() noexcept
         const std::filesystem::path path{ pathToFonts };
         CoTaskMemFree(pathToFonts);
 
-        fonts.normal15px = io.Fonts->AddFontFromFileTTF((path / "msyh.ttc").string().c_str(), 15.0f, &cfg, Helpers::getFontGlyphRanges());
+        fonts.normal15px = io.Fonts->AddFontFromFileTTF((path / "tahoma.ttf").string().c_str(), 15.0f, &cfg, Helpers::getFontGlyphRanges());
         if (!fonts.normal15px)
             io.Fonts->AddFontDefault(&cfg);
 
-        fonts.tahoma34 = io.Fonts->AddFontFromFileTTF((path / "msyh.ttc").string().c_str(), 34.0f, &cfg, Helpers::getFontGlyphRanges());
+        fonts.tahoma34 = io.Fonts->AddFontFromFileTTF((path / "tahoma.ttf").string().c_str(), 34.0f, &cfg, Helpers::getFontGlyphRanges());
         if (!fonts.tahoma34)
             io.Fonts->AddFontDefault(&cfg);
 
-        fonts.tahoma28 = io.Fonts->AddFontFromFileTTF((path / "msyh.ttc").string().c_str(), 28.0f, &cfg, Helpers::getFontGlyphRanges());
+        fonts.tahoma28 = io.Fonts->AddFontFromFileTTF((path / "tahomabd.ttf").string().c_str(), 28.0f, &cfg, Helpers::getFontGlyphRanges());
         if (!fonts.tahoma28)
             io.Fonts->AddFontDefault(&cfg);
 
@@ -98,8 +98,7 @@ GUI::GUI() noexcept
     addFontFromVFONT("csgo/panorama/fonts/notosanskr-regular.vfont", 15.0f, io.Fonts->GetGlyphRangesKorean(), true);
     addFontFromVFONT("csgo/panorama/fonts/notosanssc-regular.vfont", 15.0f, io.Fonts->GetGlyphRangesChineseFull(), true);
     constexpr auto unicodeFontSize = 16.0f;
-    // fonts.unicodeFont = addFontFromVFONT("csgo/panorama/fonts/notosans-bold.vfont", unicodeFontSize, Helpers::getFontGlyphRanges(), false);
-    fonts.unicodeFont = addFontFromVFONT("csgo/panorama/fonts/notosans-bold.vfont", unicodeFontSize, io.Fonts->GetGlyphRangesChineseFull(), false);
+    fonts.unicodeFont = addFontFromVFONT("csgo/panorama/fonts/notosans-bold.vfont", unicodeFontSize, Helpers::getFontGlyphRanges(), false);
 }
 
 void GUI::render() noexcept
@@ -312,27 +311,15 @@ void GUI::renderLegitbotWindow() noexcept
     ImGui::SliderInt("Reaction time", &config->legitbot[currentWeapon].reactionTime, 0, 300, "%d");
     ImGui::SliderInt("Min damage", &config->legitbot[currentWeapon].minDamage, 0, 101, "%d");
     config->legitbot[currentWeapon].minDamage = std::clamp(config->legitbot[currentWeapon].minDamage, 0, 250);
-    // rcs turns off with silent on, and comboboxes don't fit here
-    // (you can't control recoil you can't see)
-    if (!config->legitbot[currentWeapon].silent) {
-        ImGui::Checkbox("Standalone RCS", &config->legitbot[currentWeapon].standaloneRCS);
-        if (config->legitbot[currentWeapon].standaloneRCS) {
-            ImGui::SameLine();
-            ImGui::Checkbox("Random RCS factor", &config->legitbot[currentWeapon].randomRCS);
-            ImGui::InputInt("Ignore Shots", &config->legitbot[currentWeapon].shotsFired);
-            if (config->legitbot[currentWeapon].randomRCS) {
-                ImGui::SliderFloat("Recoil control X odds", &config->legitbot[currentWeapon].recoilControlX, 0.0f, 1.0f, "%.5f");
-                ImGui::SliderFloat("Recoil control Y odds", &config->legitbot[currentWeapon].recoilControlY, 0.0f, 1.0f, "%.5f");
-            }
-            else {
-                ImGui::SliderFloat("Recoil control X", &config->legitbot[currentWeapon].recoilControlX, 0.0f, 1.0f, "%.5f");
-                ImGui::SliderFloat("Recoil control Y", &config->legitbot[currentWeapon].recoilControlY, 0.0f, 1.0f, "%.5f");
-            }
-        }
-    }
     ImGui::Checkbox("Killshot", &config->legitbot[currentWeapon].killshot);
-    config->legitbot[currentWeapon].shotsFired = std::clamp(config->legitbot[currentWeapon].shotsFired, 0, 150);
     ImGui::Checkbox("Between shots", &config->legitbot[currentWeapon].betweenShots);
+    ImGui::Checkbox("Recoil control system", &config->recoilControlSystem.enabled);
+    ImGui::SameLine();
+    ImGui::Checkbox("Silent RCS", &config->recoilControlSystem.silent);
+    ImGui::SliderInt("RCS Ignore Shots", &config->recoilControlSystem.shotsFired, 0, 150, "%d");
+    ImGui::SliderFloat("RCS Horizontal", &config->recoilControlSystem.horizontal, 0.0f, 1.0f, "%.5f");
+    ImGui::SliderFloat("RCS Vertical", &config->recoilControlSystem.vertical, 0.0f, 1.0f, "%.5f");
+    ImGui::Columns(1);
 }
 
 void GUI::renderRagebotWindow() noexcept
@@ -457,7 +444,6 @@ void GUI::renderRagebotWindow() noexcept
     ImGui::Checkbox("Between shots", &config->ragebot[currentWeapon].betweenShots);
     ImGui::Checkbox("Disable multipoint if low fps", &config->ragebot[currentWeapon].disableMultipointIfLowFPS);
     ImGui::Checkbox("Disable backtrack if low fps", &config->ragebot[currentWeapon].disableBacktrackIfLowFPS);
-    ImGui::Checkbox("Resolver", &config->ragebot[currentWeapon].resolver);
     ImGui::Combo("Priority", &config->ragebot[currentWeapon].priority, "Health\0Distance\0Fov\0");
 
     for (size_t i = 0; i < ARRAYSIZE(hitbox); i++)
@@ -675,7 +661,6 @@ void GUI::renderFakelagWindow() noexcept
     ImGui::Combo("Mode", &config->fakelag.mode, "Static\0Adaptative\0Random\0");
     ImGui::PushItemWidth(220.0f);
     ImGui::SliderInt("Limit", &config->fakelag.limit, 1, 16, "%d");
-    ImGui::SliderInt("Random min limit", &config->fakelag.randomMinLimit, 1, 16, "%d");
     ImGui::PopItemWidth();
     ImGui::NextColumn();
     ImGui::Columns(1);
@@ -698,16 +683,10 @@ void GUI::renderRageAntiAimWindow() noexcept
     ImGui::Columns(2, nullptr, false);
     ImGui::SetColumnOffset(1, 300.f);
     ImGui::Checkbox("Enabled", &config->rageAntiAim.enabled);
-    ImGui::Checkbox("Disable in freezetime", &config->disableInFreezetime);
+    ImGui::Checkbox("Disable in freeztime", &config->disableInFreezetime);
     ImGui::Combo("Pitch", &config->rageAntiAim.pitch, "Off\0Down\0Zero\0Up\0");
-    ImGui::Combo("Yaw base", reinterpret_cast<int*>(&config->rageAntiAim.yawBase), "Off\0Paranoia\0Backward\0Right\0Left\0Spin\0");
+    ImGui::Combo("Yaw base", reinterpret_cast<int*>(&config->rageAntiAim.yawBase), "Off\0Forward\0Backward\0Right\0Left\0Spin\0");
     ImGui::Combo("Yaw modifier", reinterpret_cast<int*>(&config->rageAntiAim.yawModifier), "Off\0Jitter\0");
-
-    if (config->rageAntiAim.yawBase == Yaw::paranoia) {
-        ImGui::SliderInt("Paranoia min", &config->rageAntiAim.paranoiaMin, 0, 180, "%d");
-        ImGui::SliderInt("Paranoia max", &config->rageAntiAim.paranoiaMax, 0, 180, "%d");
-    }
-
     ImGui::PushItemWidth(220.0f);
     ImGui::SliderInt("Yaw add", &config->rageAntiAim.yawAdd, -180, 180, "%d");
     ImGui::PopItemWidth();
@@ -1219,10 +1198,6 @@ void GUI::renderStreamProofESPWindow() noexcept
             }
 
             ImGui::PopID();
-            
-            ImGuiCustom::colorPicker("Footsteps", config->visuals.footsteps.footstepBeams);
-            ImGui::SliderInt("Thickness", &config->visuals.footsteps.footstepBeamThickness, 0, 30, "Thickness: %d%%");
-            ImGui::SliderInt("Radius", &config->visuals.footsteps.footstepBeamRadius, 0, 230, "Radius: %d%%");
 
             ImGuiCustom::colorPicker("Line of sight", playerConfig.lineOfSight);
 
@@ -1274,7 +1249,7 @@ void GUI::renderVisualsWindow() noexcept
 {
     ImGui::Columns(2, nullptr, false);
     ImGui::SetColumnOffset(1, 280.0f);
-    constexpr auto playerModels = "Default\0Special Agent Ava | FBI\0Operator | FBI SWAT\0Markus Delrow | FBI HRT\0Michael Syfers | FBI Sniper\0B Squadron Officer | SAS\0Seal Team 6 Soldier | NSWC SEAL\0Buckshot | NSWC SEAL\0Lt. Commander Ricksaw | NSWC SEAL\0Third Commando Company | KSK\0'Two Times' McCoy | USAF TACP\0Dragomir | Sabre\0Rezan The Ready | Sabre\0'The Doctor' Romanov | Sabre\0Maximus | Sabre\0Blackwolf | Sabre\0The Elite Mr. Muhlik | Elite Crew\0Ground Rebel | Elite Crew\0Osiris | Elite Crew\0Prof. Shahmat | Elite Crew\0Enforcer | Phoenix\0Slingshot | Phoenix\0Soldier | Phoenix\0Pirate\0Pirate Variant A\0Pirate Variant B\0Pirate Variant C\0Pirate Variant D\0Anarchist\0Anarchist Variant A\0Anarchist Variant B\0Anarchist Variant C\0Anarchist Variant D\0Balkan Variant A\0Balkan Variant B\0Balkan Variant C\0Balkan Variant D\0Balkan Variant E\0Jumpsuit Variant A\0Jumpsuit Variant B\0Jumpsuit Variant C\0GIGN\0GIGN Variant A\0GIGN Variant B\0GIGN Variant C\0GIGN Variant D\0Street Soldier | Phoenix\0'Blueberries' Buckshot | NSWC SEAL\0'Two Times' McCoy | TACP Cavalry\0Rezan the Redshirt | Sabre\0Dragomir | Sabre Footsoldier\0Cmdr. Mae 'Dead Cold' Jamison | SWAT\0001st Lieutenant Farlow | SWAT\0John 'Van Healen' Kask | SWAT\0Bio-Haz Specialist | SWAT\0Sergeant Bombson | SWAT\0Chem-Haz Specialist | SWAT\0Sir Bloody Miami Darryl | The Professionals\0Sir Bloody Silent Darryl | The Professionals\0Sir Bloody Skullhead Darryl | The Professionals\0Sir Bloody Darryl Royale | The Professionals\0Sir Bloody Loudmouth Darryl | The Professionals\0Safecracker Voltzmann | The Professionals\0Little Kev | The Professionals\0Number K | The Professionals\0Getaway Sally | The Professionals\0";
+    constexpr auto playerModels = "Default\0Special Agent Ava | FBI\0Operator | FBI SWAT\0Markus Delrow | FBI HRT\0Michael Syfers | FBI Sniper\0B Squadron Officer | SAS\0Seal Team 6 Soldier | NSWC SEAL\0Buckshot | NSWC SEAL\0Lt. Commander Ricksaw | NSWC SEAL\0Third Commando Company | KSK\0'Two Times' McCoy | USAF TACP\0Dragomir | Sabre\0Rezan The Ready | Sabre\0'The Doctor' Romanov | Sabre\0Maximus | Sabre\0Blackwolf | Sabre\0The Elite Mr. Muhlik | Elite Crew\0Ground Rebel | Elite Crew\0Osiris | Elite Crew\0Prof. Shahmat | Elite Crew\0Enforcer | Phoenix\0Slingshot | Phoenix\0Soldier | Phoenix\0Pirate\0Pirate Variant A\0Pirate Variant B\0Pirate Variant C\0Pirate Variant D\0Anarchist\0Anarchist Variant A\0Anarchist Variant B\0Anarchist Variant C\0Anarchist Variant D\0Balkan Variant A\0Balkan Variant B\0Balkan Variant C\0Balkan Variant D\0Balkan Variant E\0Jumpsuit Variant A\0Jumpsuit Variant B\0Jumpsuit Variant C\0Street Soldier | Phoenix\0'Blueberries' Buckshot | NSWC SEAL\0'Two Times' McCoy | TACP Cavalry\0Rezan the Redshirt | Sabre\0Dragomir | Sabre Footsoldier\0Cmdr. Mae 'Dead Cold' Jamison | SWAT\0001st Lieutenant Farlow | SWAT\0John 'Van Healen' Kask | SWAT\0Bio-Haz Specialist | SWAT\0Sergeant Bombson | SWAT\0Chem-Haz Specialist | SWAT\0Sir Bloody Miami Darryl | The Professionals\0Sir Bloody Silent Darryl | The Professionals\0Sir Bloody Skullhead Darryl | The Professionals\0Sir Bloody Darryl Royale | The Professionals\0Sir Bloody Loudmouth Darryl | The Professionals\0Safecracker Voltzmann | The Professionals\0Little Kev | The Professionals\0Number K | The Professionals\0Getaway Sally | The Professionals\0";
     ImGui::Combo("T Player Model", &config->visuals.playerModelT, playerModels);
     ImGui::Combo("CT Player Model", &config->visuals.playerModelCT, playerModels);
     ImGui::InputText("Custom Player Model", config->visuals.playerModel, sizeof(config->visuals.playerModel));
@@ -1328,6 +1303,20 @@ void GUI::renderVisualsWindow() noexcept
     ImGui::Checkbox("No scope overlay", &config->visuals.noScopeOverlay);
     ImGui::Checkbox("No grass", &config->visuals.noGrass);
     ImGui::Checkbox("No shadows", &config->visuals.noShadows);
+
+    ImGui::Checkbox("Custom post-processing", &config->visuals.customPostProcessing.enabled);
+    ImGui::SameLine();
+    bool ppPopup = ImGui::Button("Edit");
+
+    if (ppPopup)
+        ImGui::OpenPopup("##pppopup");
+
+    if (ImGui::BeginPopup("##pppopup")) {
+        ImGui::SliderFloat("World exposure", &config->visuals.customPostProcessing.worldExposure, 0.0f, 100.f, "%.3f", ImGuiSliderFlags_Logarithmic);
+        ImGui::SliderFloat("Model ambient", &config->visuals.customPostProcessing.modelAmbient, 0.0f, 100.f, "%.3f", ImGuiSliderFlags_Logarithmic);
+        ImGui::SliderFloat("Bloom scale", &config->visuals.customPostProcessing.bloomScale, 0.0f, 100.f, "%.3f", ImGuiSliderFlags_Logarithmic);
+        ImGui::EndPopup();
+    }
 
     ImGui::Checkbox("Shadow changer", &config->visuals.shadowsChanger.enabled);
     ImGui::SameLine();
@@ -1419,15 +1408,7 @@ void GUI::renderVisualsWindow() noexcept
     ImGui::PushID(4);
     ImGui::SliderInt("", &config->visuals.flashReduction, 0, 100, "Flash reduction: %d%%");
     ImGui::PopID();
-    ImGui::PushID(5);
-    ImGui::SliderFloat("", &config->visuals.glowOutlineWidth, 0.0f, 100.0f, "Glow thickness: %.2f");
-    ImGui::PopID();
     ImGui::Combo("Skybox", &config->visuals.skybox, Visuals::skyboxList.data(), Visuals::skyboxList.size());
-     if (config->visuals.skybox == 26) {
-        ImGui::InputText("Skybox filename", &config->visuals.customSkybox);
-        if (ImGui::IsItemHovered())
-            ImGui::SetTooltip("skybox files must be put in csgo/materials/skybox/ ");
-    }
     ImGuiCustom::colorPicker("Map color", config->visuals.mapColor);
     ImGui::PushID(13);
     ImGui::SliderInt("", &config->visuals.asusWalls, 0, 100, "Asus walls: %d");
@@ -1446,7 +1427,6 @@ void GUI::renderVisualsWindow() noexcept
     ImGui::SliderFloat("Bullet Impacts time", &config->visuals.bulletImpactsTime, 0.1f, 5.0f, "Bullet Impacts time: %.2fs");
     ImGuiCustom::colorPicker("Molotov Hull", config->visuals.molotovHull);
     ImGuiCustom::colorPicker("Smoke Hull", config->visuals.smokeHull);
-    ImGuiCustom::colorPicker("Molotov Polygon", config->visuals.molotovPolygon);
 
     ImGui::Checkbox("Smoke Timer", &config->visuals.smokeTimer);
     ImGui::SameLine();
@@ -1807,8 +1787,8 @@ void GUI::renderMiscWindow() noexcept
     ImGui::PushID("Auto peek Key");
     ImGui::hotkey2("", config->misc.autoPeekKey);
     ImGui::PopID();
-    ImGui::Checkbox("Noscope crosshair", &config->misc.noscopeCrosshair);
-    ImGui::Checkbox("Recoil crosshair", &config->misc.recoilCrosshair);
+    ImGuiCustom::colorPicker("Noscope crosshair", config->misc.noscopeCrosshair);
+    ImGuiCustom::colorPicker("Recoil crosshair", config->misc.recoilCrosshair);
     ImGui::Checkbox("Auto pistol", &config->misc.autoPistol);
     ImGui::Checkbox("Auto reload", &config->misc.autoReload);
     ImGui::Checkbox("Auto accept", &config->misc.autoAccept);
@@ -1931,7 +1911,6 @@ void GUI::renderMiscWindow() noexcept
     ImGui::Checkbox("Fast Stop", &config->misc.fastStop);
     ImGuiCustom::colorPicker("Bomb timer", config->misc.bombTimer);
     ImGuiCustom::colorPicker("Hurt indicator", config->misc.hurtIndicator);
-    ImGuiCustom::colorPicker("Yaw indicator", config->misc.yawIndicator);
     ImGui::Checkbox("Prepare revolver", &config->misc.prepareRevolver);
     ImGui::SameLine();
     ImGui::PushID("Prepare revolver Key");
@@ -1976,7 +1955,8 @@ void GUI::renderMiscWindow() noexcept
     ImGui::Checkbox("Opposite Hand Knife", &config->misc.oppositeHandKnife);
     ImGui::Checkbox("Sv pure bypass", &config->misc.svPureBypass);
     ImGui::Checkbox("Unlock inventory", &config->misc.inventoryUnlocker);
-    ImGui::Checkbox("Unlock hidden cvars", &config->misc.unhideConvars);
+    if (ImGui::Button("Unlock hidden cvars"))
+        Misc::unlockHiddenCvars();
     ImGui::Checkbox("Preserve Killfeed", &config->misc.preserveKillfeed.enabled);
     ImGui::SameLine();
 
@@ -2213,10 +2193,7 @@ void GUI::renderMiscWindow() noexcept
 
     if (ImGui::Button("Unhook"))
         hooks->uninstall();
-    
-    static bool metrics_show{};
-    ImGui::Checkbox("Metrics", &metrics_show);
-    if (metrics_show) ImGui::ShowMetricsWindow(&metrics_show);
+
     ImGui::Columns(1);
 }
 
@@ -2594,7 +2571,7 @@ void GUI::renderGuiStyle() noexcept
                     ImGui::BeginChild("##Text", ImVec2{ 700, 20 }, false);
                     {
                         ImGui::SetCursorPos(ImVec2{ 2, 2 });
-                        ImGui::Text("Better Osiris Made In https://github.com/MesuDevastator/OsirisAndExtra");
+                        ImGui::Text("Better Osiris Made In https://github.com/notgoodusename/OsirisAndExtra");
                     }
                     ImGui::EndChild();
                 }

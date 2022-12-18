@@ -6,11 +6,12 @@
 #include <string>
 #include <unordered_map>
 
+#include "imgui/imgui.h"
+
+#include "Hacks/SkinChanger.h"
+
 #include "ConfigStructs.h"
 #include "InputUtil.h"
-#include "Hacks/AntiAim.h"
-#include "Hacks/SkinChanger.h"
-#include "imgui/imgui.h"
 
 class Config {
 public:
@@ -33,7 +34,6 @@ public:
 
     struct Ragebot {
         bool enabled{ false };
-        bool resolver{ false };
         bool aimlock{ false };
         bool silent{ false };
         bool friendlyFire{ false };
@@ -63,20 +63,17 @@ public:
         bool enabled = false;
         int mode = 0;
         int limit = 1;
-        int randomMinLimit = 1;
     } fakelag;
 
     struct RageAntiAimConfig {
         bool enabled = false;
         int pitch = 0; //Off, Down, Zero, Up
         Yaw yawBase = Yaw::off;
-        KeyBind manualForward{ std::string("manual forward"), Off},
-            manualBackward{ std::string("manual backward"), Off },
-            manualRight{ std::string("manual right"), Off },
-            manualLeft{ std::string("manual left"), Off };
+        KeyBind manualForward{ std::string("manual forward"), KeyMode::Off },
+            manualBackward{ std::string("manual backward"), KeyMode::Off },
+            manualRight{ std::string("manual right"), KeyMode::Off },
+            manualLeft{ std::string("manual left"), KeyMode::Off };
         int yawModifier = 0; //Off, Jitter
-        int paranoiaMin = 0;
-        int paranoiaMax = 0;
         int yawAdd = 0; //-180/180
         int spinBase = 0; //-180/180
         int jitterRange = 0;
@@ -120,18 +117,21 @@ public:
         float smooth{ 1.0f };
         int reactionTime{ 100 };
         int hitboxes{ 0 };
-        float recoilControlX{ 0.0f };
-        float recoilControlY{ 0.0f };
         int minDamage{ 1 };
-        int shotsFired{ 0 };
         bool killshot{ false };
         bool betweenShots{ true };
-        bool standaloneRCS{ false };
-        bool randomRCS{ true };
     };
     std::array<Legitbot, 40> legitbot;
     KeyBind legitbotKey{ std::string("legitbot") };
-    ColorToggle legitbotFov{ 1.0f, 1.0f, 1.0f, 1.0f };
+    ColorToggleOutline legitbotFov{ 1.0f, 1.0f, 1.0f, 0.25f };
+
+    struct RecoilControlSystem {
+        bool enabled{ false };
+        bool silent{ false };
+        int shotsFired{ 0 };
+        float horizontal{ 1.0f };
+        float vertical{ 1.0f };
+    } recoilControlSystem;
 
     struct Triggerbot {
         bool enabled = false;
@@ -251,7 +251,6 @@ public:
         int farZ{ 0 };
         int flashReduction{ 0 };
         int skybox{ 0 };
-        std::string customSkybox;
         bool deagleSpinner{ false };
         struct MotionBlur
         {
@@ -263,12 +262,6 @@ public:
             float rotationIntensity{ 1.0f };
             float strength{ 1.0f };
         } motionBlur;
-        
-        struct FootstepESP {
-            ColorToggle footstepBeams{ 0.2f, 0.5f, 1.f, 1.0f };
-            int footstepBeamRadius = 0;
-            int footstepBeamThickness = 0;
-        } footsteps;
         int screenEffect{ 0 };
         int hitEffect{ 0 };
         float hitEffectTime{ 0.6f };
@@ -283,7 +276,6 @@ public:
         BulletTracers bulletTracers;
         ColorToggle molotovHull{ 1.0f, 0.27f, 0.0f, 0.3f };
         ColorToggle smokeHull{ 0.5f, 0.5f, 0.5f, 0.3f };
-        ColorToggle molotovPolygon{ 1.0f, 0.27f, 0.0f, 0.3f };
         struct Viewmodel
         {
             bool enabled { false };
@@ -305,7 +297,13 @@ public:
         Color4 molotovTimerBG{ 1.0f, 1.0f, 1.0f, 0.5f };
         Color4 molotovTimerTimer{ 0.0f, 0.0f, 1.0f, 1.0f };
         Color4 molotovTimerText{ 0.0f, 0.0f, 0.0f, 1.0f };
-        float glowOutlineWidth{ 6.0f };
+
+        struct CustomPostProcessing {
+            bool  enabled = false;
+            float worldExposure = 0.0f;
+            float modelAmbient = 0.0f;
+            float bloomScale = 0.0f;
+        } customPostProcessing;
     } visuals;
 
     std::array<item_setting, 36> skinChanger;
@@ -369,13 +367,12 @@ public:
         bool oppositeHandKnife = false;
         bool svPureBypass{ true };
         bool inventoryUnlocker{ false };
-        bool unhideConvars{ false };
         KillfeedChanger killfeedChanger;
         PreserveKillfeed preserveKillfeed;
         char clanTag[16];
         char name[16];
-        bool noscopeCrosshair{ false };
-        bool recoilCrosshair{ false };
+        ColorToggleThickness noscopeCrosshair;
+        ColorToggleThickness recoilCrosshair;
         ColorToggleThickness nadeDamagePredict;
         Color4 nadeTrailPredict;
         Color4 nadeCirclePredict{ 0.f, 0.5f, 1.f, 1.f };
@@ -411,10 +408,9 @@ public:
         };
         Watermark watermark;
         float aspectratio{ 0 };
-        std::string killMessageString{ "1" };
-        ColorToggle3 bombTimer{ 0.3f, 0.1f, 0.3f };
+        std::string killMessageString{ "Gotcha!" };
+        ColorToggle3 bombTimer{ 1.0f, 0.55f, 0.0f };
         ColorToggle3 hurtIndicator{ 0.0f, 0.8f, 0.7f };
-        ColorToggle yawIndicator{ 0.47f, 0.32f, 0.66f, 0.8f };
         KeyBind prepareRevolverKey{ std::string("prepare revolver") };
         int hitSound{ 0 };
         int quickHealthshotKey{ 0 };

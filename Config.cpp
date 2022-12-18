@@ -245,18 +245,22 @@ static void from_json(const json& j, Config::Legitbot& a)
     read(j, "Reaction time", a.reactionTime);
     read(j, "Hitboxes", a.hitboxes);
     read(j, "Min damage", a.minDamage);
+    read(j, "Killshot", a.killshot);
     read(j, "Between shots", a.betweenShots);
-    read(j, "Standalone RCS", a.standaloneRCS);
-    read(j, "Standalone RCS Ignore Shots", a.shotsFired);
-    read(j, "Recoil control X", a.recoilControlX);
-    read(j, "Recoil control Y", a.recoilControlY);
-    read(j, "Standalone RCS Random factor", a.randomRCS);
+}
+
+static void from_json(const json& j, Config::RecoilControlSystem& r)
+{
+    read(j, "Enabled", r.enabled);
+    read(j, "Silent", r.silent);
+    read(j, "Ignore Shots", r.shotsFired);
+    read(j, "Horizontal", r.horizontal);
+    read(j, "Vertical", r.vertical);
 }
 
 static void from_json(const json& j, Config::Ragebot& r)
 {
     read(j, "Enabled", r.enabled);
-    read(j, "Resolver", r.resolver);
     read(j, "Aimlock", r.aimlock);
     read(j, "Silent", r.silent);
     read(j, "Friendly fire", r.friendlyFire);
@@ -310,8 +314,6 @@ static void from_json(const json& j, Config::RageAntiAimConfig& a)
     read(j, "Manual right Key", a.manualRight);
     read(j, "Manual left Key", a.manualLeft);
     read(j, "Yaw modifier", a.yawModifier);
-    read(j, "Paranoia min", a.paranoiaMin);
-    read(j, "Paranoia max", a.paranoiaMax);
     read(j, "Yaw add", a.yawAdd);
     read(j, "Jitter Range", a.jitterRange);
     read(j, "Spin base", a.spinBase);
@@ -333,7 +335,6 @@ static void from_json(const json& j, Config::Fakelag& f)
     read(j, "Enabled", f.enabled);
     read(j, "Mode", f.mode);
     read(j, "Limit", f.limit);
-    read(j, "Random min limit", f.randomMinLimit);
 }
 
 static void from_json(const json& j, Config::Tickbase& t)
@@ -398,11 +399,12 @@ static void from_json(const json& j, Config::StreamProofESP& e)
     read(j, "Other Entities", e.otherEntities);
 }
 
-static void from_json(const json& j, Config::Visuals::FootstepESP& ft)
+static void from_json(const json& j, Config::Visuals::CustomPostProcessing& c)
 {
-    read<value_t::object>(j, "Enabled", ft.footstepBeams);
-    read(j, "Thickness", ft.footstepBeamThickness);
-    read(j, "Radius", ft.footstepBeamRadius);
+    read(j, "Enabled", c.enabled);
+    read(j, "World exposure", c.worldExposure);
+    read(j, "Model ambient", c.modelAmbient);
+    read(j, "Bloom scale", c.bloomScale);
 }
 
 static void from_json(const json& j, Config::Visuals& v)
@@ -442,9 +444,7 @@ static void from_json(const json& j, Config::Visuals& v)
     read(j, "FOV", v.fov);
     read(j, "Far Z", v.farZ);
     read(j, "Flash reduction", v.flashReduction);
-    read(j, "Glow thickness", v.glowOutlineWidth);
     read(j, "Skybox", v.skybox);
-    read<value_t::string>(j, "Custom skybox", v.customSkybox);
     read(j, "Deagle spinner", v.deagleSpinner);
     read(j, "Screen effect", v.screenEffect);
     read(j, "Hit effect", v.hitEffect);
@@ -453,6 +453,7 @@ static void from_json(const json& j, Config::Visuals& v)
     read(j, "Hit marker time", v.hitMarkerTime);
     read(j, "Playermodel T", v.playerModelT);
     read(j, "Playermodel CT", v.playerModelCT);
+    read<value_t::object>(j, "Custom post-processing", v.customPostProcessing);
     read(j, "Custom Playermodel", v.playerModel, sizeof(v.playerModel));
     read(j, "Disable jiggle bones", v.disableJiggleBones);
     read<value_t::object>(j, "Bullet Tracers", v.bulletTracers);
@@ -460,7 +461,6 @@ static void from_json(const json& j, Config::Visuals& v)
     read(j, "Bullet Impacts time", v.bulletImpactsTime);
     read<value_t::object>(j, "Molotov Hull", v.molotovHull);
     read<value_t::object>(j, "Smoke Hull", v.smokeHull);
-    read<value_t::object>(j, "Molotov Polygon", v.molotovPolygon);
     read<value_t::object>(j, "Viewmodel", v.viewModel);
     read<value_t::object>(j, "Spread circle", v.spreadCircle);
     read<value_t::object>(j, "Map color", v.mapColor);
@@ -677,8 +677,8 @@ static void from_json(const json& j, Config::Misc& m)
     read(j, "Fake duck key", m.fakeduckKey);
     read<value_t::object>(j, "Auto peek", m.autoPeek);
     read(j, "Auto peek key", m.autoPeekKey);
-    read(j, "Noscope crosshair", m.noscopeCrosshair);
-    read(j, "Recoil crosshair", m.recoilCrosshair);
+    read<value_t::object>(j, "Noscope crosshair", m.noscopeCrosshair);
+    read<value_t::object>(j, "Recoil crosshair", m.recoilCrosshair);
     read(j, "Auto pistol", m.autoPistol);
     read(j, "Auto reload", m.autoReload);
     read(j, "Auto accept", m.autoAccept);
@@ -703,7 +703,6 @@ static void from_json(const json& j, Config::Misc& m)
     read(j, "Fast Stop", m.fastStop);
     read<value_t::object>(j, "Bomb timer", m.bombTimer);
     read<value_t::object>(j, "Hurt indicator", m.hurtIndicator);
-    read<value_t::object>(j, "Yaw indicator", m.yawIndicator);
     read(j, "Prepare revolver", m.prepareRevolver);
     read(j, "Prepare revolver key", m.prepareRevolverKey);
     read(j, "Hit sound", m.hitSound);
@@ -724,7 +723,6 @@ static void from_json(const json& j, Config::Misc& m)
     read<value_t::object>(j, "Killfeed changer", m.killfeedChanger);
     read(j, "Sv pure bypass", m.svPureBypass);
     read(j, "Inventory Unlocker", m.inventoryUnlocker);
-    read(j, "Unlock hidden cvars", m.unhideConvars);
     read<value_t::object>(j, "Autobuy", m.autoBuy);
     read<value_t::object>(j, "Logger", m.logger);
     read<value_t::object>(j, "Logger options", m.loggerOptions);
@@ -950,17 +948,21 @@ static void to_json(json& j, const Config::Legitbot& o, const Config::Legitbot& 
     WRITE("Ignore smoke", ignoreSmoke);
     WRITE("Auto scope", autoScope);
     WRITE("Hitboxes", hitboxes);
-    WRITE("Recoil control X", recoilControlX);
-    WRITE("Recoil control Y", recoilControlY);
     WRITE("Fov", fov);
     WRITE("Smooth", smooth);
     WRITE("Reaction time", reactionTime);
     WRITE("Min damage", minDamage);
     WRITE("Killshot", killshot);
     WRITE("Between shots", betweenShots);
-    WRITE("Standalone RCS", standaloneRCS);
-    WRITE("Standalone RCS Ignore Shots", shotsFired);
-    WRITE("Standalone RCS Random factor", randomRCS);
+}
+
+static void to_json(json& j, const Config::RecoilControlSystem& o, const Config::RecoilControlSystem& dummy = {})
+{
+    WRITE("Enabled", enabled);
+    WRITE("Silent", silent);
+    WRITE("Ignore Shots", shotsFired);
+    WRITE("Horizontal", horizontal);
+    WRITE("Vertical", vertical);
 }
 
 static void to_json(json& j, const Config::Ragebot& o, const Config::Ragebot& dummy = {})
@@ -976,7 +978,6 @@ static void to_json(json& j, const Config::Ragebot& o, const Config::Ragebot& du
     WRITE("Auto shot", autoShot);
     WRITE("Auto scope", autoScope);
     WRITE("Auto stop", autoStop);
-    WRITE("Resolver", resolver);
     WRITE("Between shots", betweenShots);
     WRITE("Disable multipoint if low fps", disableMultipointIfLowFPS);
     WRITE("Disable backtrack if low fps", disableMultipointIfLowFPS);
@@ -1078,8 +1079,6 @@ static void to_json(json& j, const Config::RageAntiAimConfig& o, const Config::R
     to_json(j["Manual right Key"], o.manualRight, KeyBind::NONE);
     to_json(j["Manual left Key"], o.manualLeft, KeyBind::NONE);
     WRITE("Yaw modifier", yawModifier);
-    WRITE("Paranoia min", paranoiaMin);
-    WRITE("Paranoia max", paranoiaMax);
     WRITE("Yaw add", yawAdd);
     WRITE("Jitter Range", jitterRange);
     WRITE("Spin base", spinBase);
@@ -1101,7 +1100,6 @@ static void to_json(json& j, const Config::Fakelag& o, const Config::Fakelag& du
     WRITE("Enabled", enabled);
     WRITE("Mode", mode);
     WRITE("Limit", limit);
-    WRITE("Random min limit", randomMinLimit);
 }
 
 static void to_json(json& j, const Config::Tickbase& o, const Config::Tickbase& dummy = {})
@@ -1236,13 +1234,6 @@ static void to_json(json& j, const Config::Misc::Logger& o, const Config::Misc::
     WRITE("Events", events);
 }
 
-static void to_json(json& j, const Config::Visuals::FootstepESP& o, const Config::Visuals::FootstepESP& dummy)
-{
-    WRITE("Enabled", footstepBeams);
-    WRITE("Thickness", footstepBeamThickness);
-    WRITE("Radius", footstepBeamRadius);
-}
-
 static void to_json(json& j, const Config::Visuals::MotionBlur& o, const Config::Visuals::MotionBlur& dummy)
 {
     WRITE("Enabled", enabled);
@@ -1349,7 +1340,6 @@ static void to_json(json& j, const Config::Misc& o)
     WRITE("Fast Stop", fastStop);
     WRITE("Bomb timer", bombTimer);
     WRITE("Hurt indicator", hurtIndicator);
-    WRITE("Yaw indicator", yawIndicator);
     WRITE("Prepare revolver", prepareRevolver);
     WRITE("Prepare revolver key", prepareRevolverKey);
     WRITE("Hit sound", hitSound);
@@ -1370,15 +1360,22 @@ static void to_json(json& j, const Config::Misc& o)
     WRITE("Killfeed changer", killfeedChanger);
     WRITE("Sv pure bypass", svPureBypass);
     WRITE("Inventory Unlocker", inventoryUnlocker);
-    WRITE("Unlock hidden cvars", unhideConvars);
     WRITE("Autobuy", autoBuy);
     WRITE("Logger", logger);
     WRITE("Logger options", loggerOptions);
-    WRITE("Custom clantag", customClanTag);
-    WRITE("Custom name", customName);
+
+    WRITE("Custom name", customClanTag);
 
     if (o.clanTag[0])
         j["Name"] = o.name;
+}
+
+static void to_json(json& j, const Config::Visuals::CustomPostProcessing& o, const Config::Visuals::CustomPostProcessing& dummy)
+{
+    WRITE("Enabled", enabled);
+    WRITE("World exposure", worldExposure);
+    WRITE("Model ambient", modelAmbient);
+    WRITE("Bloom scale", bloomScale);
 }
 
 static void to_json(json& j, const Config::Visuals& o)
@@ -1420,9 +1417,7 @@ static void to_json(json& j, const Config::Visuals& o)
     WRITE("FOV", fov);
     WRITE("Far Z", farZ);
     WRITE("Flash reduction", flashReduction);
-    WRITE("Glow thickness", glowOutlineWidth);
     WRITE("Skybox", skybox);
-    WRITE("Custom skybox", customSkybox);
     WRITE("Deagle spinner", deagleSpinner);
     WRITE("Screen effect", screenEffect);
     WRITE("Hit effect", hitEffect);
@@ -1439,7 +1434,6 @@ static void to_json(json& j, const Config::Visuals& o)
     WRITE("Bullet Impacts time", bulletImpactsTime);
     WRITE("Molotov Hull", molotovHull);
     WRITE("Smoke Hull", smokeHull);
-    WRITE("Molotov Polygon", molotovPolygon);
     WRITE("Viewmodel", viewModel);
     WRITE("Spread circle", spreadCircle);
     WRITE("Map color", mapColor);
@@ -1453,6 +1447,7 @@ static void to_json(json& j, const Config::Visuals& o)
     WRITE("Molotov timer BG", molotovTimerBG);
     WRITE("Molotov timer TIMER", molotovTimerTimer);
     WRITE("Molotov timer TEXT", molotovTimerText);
+    WRITE("Custom post-processing", customPostProcessing);
 }
 
 static void to_json(json& j, const ImVec4& o)
