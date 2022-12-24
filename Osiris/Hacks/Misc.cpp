@@ -1834,15 +1834,15 @@ void Misc::yawIndicator(ImDrawList* drawList) noexcept
         if (const auto& [exists, alive, inReload, shooting, noScope, nextWeaponAttack, fov, handle, flashDuration, aimPunch, origin, inaccuracy, team, velocityModifier] { GameData::local() }; !exists || !alive)
             return;
     }
-    ImVec2 pos{ ImGui::GetIO().DisplaySize / 2 };
-    ImU32 col{ Helpers::calculateColor(static_cast<Color4>(config->misc.yawIndicator)) };
+    const ImVec2 pos{ ImGui::GetIO().DisplaySize / 2 };
+    const ImU32 col{ Helpers::calculateColor(static_cast<Color4>(config->misc.yawIndicator)) };
     if (config->rageAntiAim.manualForward.isToggled())
         drawList->AddTriangleFilled(pos + ImVec2{ -20, -20 }, pos + ImVec2{ 20, -20 }, pos + ImVec2{ 0, -50 }, col);
     if (config->rageAntiAim.manualBackward.isToggled())
         drawList->AddTriangleFilled(pos + ImVec2{ -20, 20 }, pos + ImVec2{ 20, 20 }, pos + ImVec2{ 0, 50 }, col);
-    if (config->rageAntiAim.manualRight.isToggled())
+    if (config->rageAntiAim.manualRight.isToggled() || AntiAim::auto_direction_yaw == 1)
         drawList->AddTriangleFilled(pos + ImVec2{ 20, 20 }, pos + ImVec2{ 20, -20 }, pos + ImVec2{ 50, 0 }, col);
-    if (config->rageAntiAim.manualLeft.isToggled())
+    if (config->rageAntiAim.manualLeft.isToggled() || AntiAim::auto_direction_yaw == -1)
         drawList->AddTriangleFilled(pos + ImVec2{ -20, 20 }, pos + ImVec2{ -20, -20 }, pos + ImVec2{ -50, 0 }, col);
 }
 

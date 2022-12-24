@@ -81,6 +81,7 @@ public:
         int spinBase = 0; //-180/180
         int jitterRange = 0;
         bool atTargets = false;
+        KeyBind autoDirection{ std::string("auto direction"), Off };
     } rageAntiAim;
 
     struct FakeAngle {

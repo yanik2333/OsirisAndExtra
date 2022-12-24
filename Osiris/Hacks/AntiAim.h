@@ -13,4 +13,6 @@ namespace AntiAim
     void run(UserCmd* cmd, const Vector& previousViewAngles, const Vector& currentViewAngles, bool& sendPacket) noexcept;
     void updateInput() noexcept;
     bool canRun(UserCmd* cmd) noexcept;
+
+    inline int auto_direction_yaw{};
 }

@@ -6,6 +6,7 @@
 #include "AntiAim.h"
 
 #include "../SDK/Engine.h"
+#include "../SDK/EngineTrace.h"
 #include "../SDK/Entity.h"
 #include "../SDK/EntityList.h"
 #include "../SDK/NetworkChannel.h"
@@ -169,8 +170,7 @@ void AntiAim::rage(UserCmd* cmd, const Vector& previousViewAngles, const Vector&
 
             if (config->rageAntiAim.yawBase != Yaw::spin)
                 staticYaw = 0.f;
-
-            const bool isInvertToggled{ config->fakeAngle.invert.isToggled() };
+                
             switch (config->rageAntiAim.yawBase)
             {
             case Yaw::paranoia:
@@ -192,6 +192,39 @@ void AntiAim::rage(UserCmd* cmd, const Vector& previousViewAngles, const Vector&
                 break;
             default:
                 break;
+            }
+
+            if (config->rageAntiAim.autoDirection.isActive())
+            {
+                constexpr std::array positions = { -35.0f, 0.0f, 35.0f };
+                std::array active = { false, false, false };
+                const auto fwd = Vector::fromAngle2D(cmd->viewangles.y);
+                const auto side = fwd.crossProduct(Vector::up());
+
+                for (std::size_t i{}; i < positions.size(); i++)
+                {
+                    const auto start = localPlayer->getEyePosition() + side * positions[i];
+                    const auto end = start + fwd * 100.0f;
+
+                    Trace trace{};
+                    interfaces->engineTrace->traceRay({ start, end }, 0x1 | 0x2, nullptr, trace);
+
+                    if (trace.fraction != 1.0f)
+                        active[i] = true;
+                }
+
+                if (active[0] && active[1] && !active[2])
+                {
+                    cmd->viewangles.y -= 90.f;
+                    auto_direction_yaw = -1;
+                }
+                else if (!active[0] && active[1] && active[2])
+                {
+                    cmd->viewangles.y += 90.f;
+                    auto_direction_yaw = 1;
+                }
+                else
+                    auto_direction_yaw = 0;
             }
 
             const bool forward = config->rageAntiAim.manualForward.isActive();

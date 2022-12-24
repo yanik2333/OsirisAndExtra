@@ -723,7 +723,7 @@ void GUI::renderRageAntiAimWindow() noexcept
     }
 
     ImGui::Checkbox("At targets", &config->rageAntiAim.atTargets);
-
+    ImGui::hotkey2("Auto direction", config->rageAntiAim.autoDirection, 60.f);
     ImGui::hotkey2("Forward", config->rageAntiAim.manualForward, 60.f);
     ImGui::hotkey2("Backward", config->rageAntiAim.manualBackward, 60.f);
     ImGui::hotkey2("Right", config->rageAntiAim.manualRight, 60.f);
