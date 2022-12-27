@@ -1,8 +1,7 @@
-# Osiris And Extra
+# OsirisAndExtra
 
-## Èç¹ûÄúÊÇÓÃVAC°²È«Æô¶¯µ«Î´¼ÓÉÏ-insecure´úÂë,ÄúÓĞ¿ÉÄÜ»á±»VAC·â½û,°´ÕÕ¹ú·ş±ê×¼,·âÆÚ¿ÉÄÜÔ¼ÓĞ:3650ÌìÇë×ÃÇéÊ¹ÓÃ!
+## åœ¨æ³¨å…¥å‰è¯·ä½¿ç”¨VACç»•è¿‡æˆ–è€…æ·»åŠ -insecureå¯åŠ¨å‚æ•°ï¼
 
+æ±‰åŒ–ç‰ˆ OsirisAndExtra
 
-ÖĞÎÄºº»¯ºóµÄOsiris And Extra
-
-Support this project at https://www.paypal.com/paypalme/notgoodusename
+åœ¨ https://www.paypal.com/paypalme/notgoodusename æ”¯æŒåŸä½œè€…
