@@ -4,4 +4,5 @@
 
 汉化版 OsirisAndExtra
 
-在 https://www.paypal.com/paypalme/notgoodusename 支持原作者
+# 我们很支持原作者的开发
+在 https://www.paypal.com/paypalme/notgoodusename 以赞助方式支持原作者
