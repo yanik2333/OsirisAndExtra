@@ -1,6 +1,8 @@
-# OsirisAndExtra
+# OsirisAndExtra中文版
 
-## 在注入前请使用VAC绕过或者添加-insecure启动参数！
+##全工程重置进行中...
+
+## 在注入前请使用VAC绕过或者添加 [-insecure] 启动参数！
 
 汉化版 OsirisAndExtra
 
